@@ -7,12 +7,12 @@ export function Header() {
         </a>
 
         <nav className="flex items-center gap-4 text-sm">
-          <a href="/login" className="text-zinc-600 transition hover:text-zinc-950">
+          <a href="/giris" className="text-zinc-600 transition hover:text-zinc-950">
             Giriş yap
           </a>
 
           <a
-            href="/register"
+            href="/kayit"
             className="rounded-full border border-zinc-300 px-4 py-2 text-zinc-900 transition hover:border-zinc-500"
           >
             Katıl

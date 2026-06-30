@@ -9,9 +9,6 @@ export function RecentExperiences() {
           <h2 className="text-xl font-semibold text-zinc-950">Son Paylaşılanlar</h2>
           <p className="mt-1 text-sm text-zinc-500">Son deneyimlerin bazıları</p>
         </div>
-        <a href="/experiences" className="text-sm font-medium text-zinc-700 hover:text-zinc-950">
-          Tümünü Gör →
-        </a>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {mockExperiences.map((experience) => (
