@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
@@ -17,6 +19,12 @@ export function Header() {
           >
             Katıl
           </a>
+          <Link
+            to="/deneyim-ekle"
+            className="text-sm font-medium text-zinc-700 hover:text-zinc-950"
+          >
+            Deneyim ekle
+          </Link>
         </nav>
       </div>
     </header>
