@@ -1,4 +1,5 @@
 import type { ExperienceFormValues } from '@/features/experiences/types';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 const inputClassName =
@@ -7,12 +8,18 @@ const inputClassName =
 const textareaClassName =
   'mt-2 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white';
 
+const errorClassName = 'mt-2 text-sm text-red-600';
+
 export function ExperienceForm() {
-  const { register, handleSubmit } = useForm<ExperienceFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ExperienceFormValues>({
     defaultValues: {
       companyName: '',
       position: '',
-      type: 'interview',
+      type: 'other',
       title: '',
       content: '',
       isAnonymous: true,
@@ -31,19 +38,21 @@ export function ExperienceForm() {
       <div>
         <label className="text-sm font-medium text-zinc-800">Şirket adı</label>
         <input
-          {...register('companyName')}
+          {...register('companyName', { required: 'Şirket adı zorunludur' })}
           placeholder="Örn. Trendyol"
           className={inputClassName}
         />
+        {errors.companyName && <p className={errorClassName}>{errors.companyName.message}</p>}
       </div>
 
       <div>
         <label className="text-sm font-medium text-zinc-800">Pozisyon</label>
         <input
-          {...register('position')}
+          {...register('position', { required: 'Pozisyon zorunludur' })}
           placeholder="Örn. Satış uzmanı, frontend developer, mimar..."
           className={inputClassName}
         />
+        {errors.position && <p className={errorClassName}>{errors.position.message}</p>}
       </div>
 
       <div>
@@ -69,20 +78,34 @@ export function ExperienceForm() {
       <div>
         <label className="text-sm font-medium text-zinc-800">Başlık</label>
         <input
-          {...register('title')}
+          {...register('title', {
+            required: 'Başlık zorunlu.',
+            minLength: {
+              value: 5,
+              message: 'Başlık en az 5 karakter olmalı.',
+            },
+          })}
           placeholder="Kısa ve net bir başlık yaz"
           className={inputClassName}
         />
+        {errors.title && <p className={errorClassName}>{errors.title.message}</p>}
       </div>
 
       <div>
         <label className="text-sm font-medium text-zinc-800">Deneyimin</label>
         <textarea
-          {...register('content')}
+          {...register('content', {
+            required: 'Deneyim alanı zorunlu.',
+            minLength: {
+              value: 50,
+              message: 'Deneyim en az 50 karakter olmalı.',
+            },
+          })}
           rows={7}
           placeholder="Süreç nasıldı, neler soruldu, çalışma ortamı nasıldı?"
           className={textareaClassName}
         />
+        {errors.content && <p className={errorClassName}>{errors.content.message}</p>}
       </div>
 
       <label className="flex items-center gap-3 text-sm text-zinc-700">
