@@ -19,10 +19,7 @@ export function Header() {
           >
             Katıl
           </a>
-          <Link
-            to="/deneyim-ekle"
-            className="text-sm font-medium text-zinc-700 hover:text-zinc-950"
-          >
+          <Link to="/paylas" className="text-sm font-medium text-zinc-700 hover:text-zinc-950">
             Deneyim ekle
           </Link>
         </nav>
