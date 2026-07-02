@@ -1,5 +1,4 @@
 import type { ExperienceFormValues } from '@/features/experiences/types';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 const inputClassName =
@@ -8,9 +7,12 @@ const inputClassName =
 const textareaClassName =
   'mt-2 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white';
 
+const disabledInputClassName =
+  'mt-2 h-12 w-full rounded-2xl border border-zinc-200 bg-red-100 px-4 text-zinc-500 outline-none cursor-not-allowed';
+
 const errorClassName = 'mt-2 text-sm text-red-600';
 
-export function ExperienceForm() {
+export function ExperienceForm({ fixedCompanyName }: { fixedCompanyName?: string }) {
   const {
     register,
     handleSubmit,
@@ -37,12 +39,23 @@ export function ExperienceForm() {
     >
       <div>
         <label className="text-sm font-medium text-zinc-800">Şirket adı</label>
-        <input
-          {...register('companyName', { required: 'Şirket adı zorunludur' })}
-          placeholder="Örn. Trendyol"
-          className={inputClassName}
-        />
-        {errors.companyName && <p className={errorClassName}>{errors.companyName.message}</p>}
+        {fixedCompanyName ? (
+          <input
+            {...register('companyName')}
+            value={fixedCompanyName}
+            readOnly
+            className={disabledInputClassName}
+          />
+        ) : (
+          <>
+            <input
+              {...register('companyName', { required: 'Şirket adı zorunludur' })}
+              placeholder="Örn. Trendyol"
+              className={inputClassName}
+            />
+            {errors.companyName && <p className={errorClassName}>{errors.companyName.message}</p>}
+          </>
+        )}
       </div>
 
       <div>
@@ -97,8 +110,8 @@ export function ExperienceForm() {
           {...register('content', {
             required: 'Deneyim alanı zorunlu.',
             minLength: {
-              value: 50,
-              message: 'Deneyim en az 50 karakter olmalı.',
+              value: 20,
+              message: 'Deneyim en az 20 karakter olmalı.',
             },
           })}
           rows={7}

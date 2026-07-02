@@ -1,3 +1,4 @@
+import { slugify } from '@/shared/lib/slugify';
 import { Link } from 'react-router-dom';
 
 type ExperienceCardProps = {
@@ -18,7 +19,7 @@ export function ExperienceCard({
   return (
     <article className="rounded-2xl border border-zinc-200 bg-slate-100 p-5 shadow-sm transition hover:border-zinc-300 hover:shadow-md">
       <Link
-        to={`/${companyName.toLowerCase()}`}
+        to={`/${slugify(companyName)}`}
         className="text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:underline"
       >
         {companyName}
