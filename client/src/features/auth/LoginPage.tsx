@@ -1,22 +1,40 @@
-import { signInWithGoogle, logout } from '@/shared/firebase';
+import { LoginForm } from '@/features/auth/components/LoginForm';
+import { AuthCard } from './components/AuthCard';
+import { useAuth } from '@/features/auth/hooks';
+import { Navigate } from 'react-router-dom';
 
 export function LoginPage() {
-  return (
-    <section className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-3xl font-bold">Giriş yap</h1>
+  const { isAuthenticated, isLoading } = useAuth();
 
-      <div className="mt-8 space-y-3">
-        <button
-          onClick={() => signInWithGoogle()}
-          className="h-12 w-full rounded-xl bg-zinc-950 text-white"
-        >
+  if (isLoading) {
+    return null;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <AuthCard
+      title="Giriş yap"
+      description="İçerdenBilgi’ye devam etmek için hesabına giriş yap."
+      footerText="Henüz hesabın yok mu?"
+      footerLinkText="Katıl"
+      footerLinkTo="/kayit"
+    >
+      <div className="space-y-4">
+        <button className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50">
           Google ile devam et
         </button>
 
-        <button onClick={() => logout()} className="h-12 w-full rounded-xl border">
-          Çıkış yap
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-zinc-200" />
+          <span className="text-xs text-zinc-400">veya</span>
+          <div className="h-px flex-1 bg-zinc-200" />
+        </div>
+
+        <LoginForm />
       </div>
-    </section>
+    </AuthCard>
   );
 }
