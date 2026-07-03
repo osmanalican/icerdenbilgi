@@ -1,4 +1,4 @@
-import { slugify } from '@/shared/lib/slugify';
+import { slugify } from '@/shared/utils/slugify';
 import { Link } from 'react-router-dom';
 
 type ExperienceCardProps = {

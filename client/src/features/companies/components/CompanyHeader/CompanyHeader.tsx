@@ -1,4 +1,4 @@
-import { slugify } from '@/shared/lib';
+import { slugify } from '@/shared/utils';
 import { Link } from 'react-router-dom';
 
 type CompanyHeaderProps = {

@@ -8,7 +8,7 @@ const textareaClassName =
   'mt-2 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white';
 
 const disabledInputClassName =
-  'mt-2 h-12 w-full rounded-2xl border border-zinc-200 bg-red-100 px-4 text-zinc-500 outline-none cursor-not-allowed';
+  'mt-2 h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-100 px-4 text-zinc-500 outline-none cursor-not-allowed';
 
 const errorClassName = 'mt-2 text-sm text-red-600';
 
@@ -22,7 +22,6 @@ export function ExperienceForm({ fixedCompanyName }: { fixedCompanyName?: string
       companyName: '',
       position: '',
       type: 'other',
-      title: '',
       content: '',
       isAnonymous: true,
     },
@@ -86,22 +85,6 @@ export function ExperienceForm({ fixedCompanyName }: { fixedCompanyName?: string
             ↓
           </span>
         </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-zinc-800">Başlık</label>
-        <input
-          {...register('title', {
-            required: 'Başlık zorunlu.',
-            minLength: {
-              value: 5,
-              message: 'Başlık en az 5 karakter olmalı.',
-            },
-          })}
-          placeholder="Kısa ve net bir başlık yaz"
-          className={inputClassName}
-        />
-        {errors.title && <p className={errorClassName}>{errors.title.message}</p>}
       </div>
 
       <div>

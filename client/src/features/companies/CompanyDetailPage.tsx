@@ -3,7 +3,7 @@ import { mockExperiences } from '../home/data/mockExperiences';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
 import { ExperienceRow } from '@/features/companies/components/ExperienceRow';
 import { CompanyHeader } from '@/features/companies/components/CompanyHeader';
-import { slugify } from '@/shared/lib';
+import { slugify } from '@/shared/utils';
 
 export function CompanyDetailPage() {
   const { slug } = useParams();

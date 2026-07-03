@@ -2,7 +2,7 @@ export function HeroSection() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20">
       <p className="mb-5 text-sm font-medium tracking-wide text-zinc-500">
-        Yazılımcılar için şirket deneyimleri
+        Mülakatlar. Deneyimler. Gerçek insanlar.
       </p>
 
       <h1 className="max-w-3xl text-5xl font-bold tracking-tight text-zinc-950 md:text-6xl">
@@ -10,7 +10,7 @@ export function HeroSection() {
       </h1>
 
       <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
-        Yazılımcıların anonim olarak paylaştığı mülakat ve çalışma deneyimlerini keşfet.
+        Mülakat süreçlerini ve çalışma deneyimlerini anonim paylaşımlarla keşfet.
       </p>
 
       <div className="mt-10 flex max-w-2xl flex-col gap-3 sm:flex-row">

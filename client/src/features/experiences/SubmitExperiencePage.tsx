@@ -1,6 +1,6 @@
 import { ExperienceForm } from '@/features/experiences/components/ExperienceForm/ExperienceForm';
 import { mockExperiences } from '@/features/home/data/mockExperiences';
-import { slugify } from '@/shared/lib/slugify';
+import { slugify } from '@/shared/utils/slugify';
 import { useSearchParams } from 'react-router-dom';
 
 export function SubmitExperiencePage() {

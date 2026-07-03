@@ -9,7 +9,7 @@ export const mockExperiences = [
   },
   {
     id: '2',
-    companyName: 'Getirç',
+    companyName: 'Getir',
     position: 'Backend Developer',
     summary: 'İlk görüşme HR ileydi. Sonrasında Node.js ve SQL ağırlıklı teknik mülakat yapıldı.',
     createdAt: '4 gün önce',
