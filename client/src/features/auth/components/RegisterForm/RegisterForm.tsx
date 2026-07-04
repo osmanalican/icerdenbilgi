@@ -33,30 +33,56 @@ export function RegisterForm() {
       <input
         type="text"
         placeholder="Ad"
-        {...register('firstName')}
+        {...register('firstName', {
+          required: 'Ad zorunlu.',
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.firstName?.message && (
+        <p className="text-sm text-red-600">{errors.firstName.message}</p>
+      )}
 
       <input
         type="text"
         placeholder="Soyad"
-        {...register('lastName')}
+        {...register('lastName', {
+          required: 'Soyad zorunlu.',
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.lastName?.message && (
+        <p className="text-sm text-red-600">{errors.lastName.message}</p>
+      )}
 
       <input
         type="email"
         placeholder="Email"
-        {...register('email')}
+        {...register('email', {
+          required: 'Email zorunlu.',
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Geçerli bir email gir.',
+          },
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.email?.message && <p className="text-sm text-red-600">{errors.email.message}</p>}
 
       <input
         type="password"
         placeholder="Şifre"
-        {...register('password')}
+        {...register('password', {
+          required: 'Şifre zorunlu.',
+          minLength: {
+            value: 6,
+            message: 'Şifre en az 6 karakter olmalı.',
+          },
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.password?.message && (
+        <p className="text-sm text-red-600">{errors.password.message}</p>
+      )}
 
       {errors.root?.message && (
         <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">

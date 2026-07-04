@@ -6,7 +6,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
@@ -23,16 +23,28 @@ export function LoginForm() {
       <input
         type="email"
         placeholder="Email"
-        {...register('email')}
+        {...register('email', {
+          required: 'Email zorunlu.',
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Geçerli bir email gir.',
+          },
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.email?.message && <p className="text-sm text-red-600">{errors.email.message}</p>}
 
       <input
         type="password"
         placeholder="Şifre"
-        {...register('password')}
+        {...register('password', {
+          required: 'Şifre zorunlu.',
+        })}
         className="h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 outline-none transition focus:border-zinc-400 focus:bg-white"
       />
+      {errors.password?.message && (
+        <p className="text-sm text-red-600">{errors.password.message}</p>
+      )}
 
       <button
         type="submit"

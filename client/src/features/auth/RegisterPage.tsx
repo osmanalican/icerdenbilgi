@@ -1,6 +1,7 @@
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
 import { AuthCard } from './components/AuthCard';
 import { useAuth } from '@/features/auth';
+import { signInWithGoogle } from '@/shared/firebase';
 import { Navigate } from 'react-router-dom';
 
 export function RegisterPage() {
@@ -21,7 +22,11 @@ export function RegisterPage() {
       footerLinkTo="/giris"
     >
       <div className="space-y-4">
-        <button className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50">
+        <button
+          type="button"
+          onClick={() => signInWithGoogle()}
+          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50"
+        >
           Google ile devam et
         </button>
 
