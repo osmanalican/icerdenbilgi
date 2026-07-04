@@ -2,17 +2,20 @@ import { LoginForm } from '@/features/auth/components/LoginForm';
 import { AuthCard } from './components/AuthCard';
 import { useAuth } from '@/features/auth/hooks';
 import { signInWithGoogle } from '@/shared/firebase';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export function LoginPage() {
+  const location = useLocation();
   const { isAuthenticated, isLoading } = useAuth();
+
+  const from = location.state?.from?.pathname ?? '/';
 
   if (isLoading) {
     return null;
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={from} replace />;
   }
 
   return (

@@ -6,6 +6,7 @@ import { LoginPage } from '@/features/auth/LoginPage';
 import { RegisterPage } from '@/features/auth/RegisterPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
 import { SubmitExperiencePage } from '@/features/experiences/SubmitExperiencePage';
+import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,14 @@ const router = createBrowserRouter([
       { path: ':slug', element: <CompanyDetailPage /> },
       { path: 'giris', element: <LoginPage /> },
       { path: 'kayit', element: <RegisterPage /> },
-      { path: 'paylas', element: <SubmitExperiencePage /> },
+      {
+        path: 'paylas',
+        element: (
+          <ProtectedRoute>
+            <SubmitExperiencePage />
+          </ProtectedRoute>
+        ),
+      },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useAuth } from '@/features/auth';
@@ -14,10 +14,6 @@ export function Header() {
     await logout();
     setIsUserMenuOpen(false);
   }
-
-  useEffect(() => {
-    console.log('User:', user);
-  }, [user]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
