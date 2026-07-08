@@ -1,5 +1,7 @@
 import cors from "cors";
 import express from "express";
+import { prisma } from "./lib/prisma.js";
+import { verifyFirebaseToken } from "./middlewares/verifyFirebaseToken.js";
 
 export const app = express();
 
@@ -8,4 +10,19 @@ app.use(express.json());
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/db-health", async (_req, res) => {
+  const companies = await prisma.company.findMany();
+
+  res.json({
+    status: "ok",
+    companiesCount: companies.length,
+  });
+});
+
+app.get("/me", verifyFirebaseToken, (req, res) => {
+  res.json({
+    user: req.user,
+  });
 });
