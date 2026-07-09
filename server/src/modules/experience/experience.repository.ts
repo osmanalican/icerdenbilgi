@@ -15,15 +15,3 @@ export function createExperience(data: CreateExperienceData) {
     data,
   });
 }
-
-export function findCompanyBySlug(slug: string) {
-  return prisma.company.findUnique({
-    where: { slug },
-  });
-}
-
-export function findUserByFireBaseUid(firebaseUid: string) {
-  return prisma.user.findUnique({
-    where: { firebaseUid },
-  });
-}

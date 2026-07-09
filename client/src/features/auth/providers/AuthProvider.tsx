@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 import { auth } from '@/shared/firebase';
 import { AuthContext } from '../context/AuthContext';
+import { syncUser } from '@/features/auth';
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -13,8 +14,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+
+      if (currentUser) {
+        try {
+          const token = await currentUser.getIdToken();
+          await syncUser(token);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
       setIsLoading(false);
     });
 

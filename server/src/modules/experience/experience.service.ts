@@ -1,8 +1,6 @@
-import {
-  createExperience,
-  findCompanyBySlug,
-  findUserByFireBaseUid,
-} from "./experience.repository";
+import { findUserByFireBaseUid } from "../auth/auth.repository";
+import { findCompanyBySlug } from "../company";
+import { createExperience } from "./experience.repository";
 
 type CreateExperienceInput = {
   firebaseUid: string;
