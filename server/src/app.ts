@@ -4,6 +4,7 @@ import { prisma } from "./lib/prisma.js";
 import { verifyFirebaseToken } from "./middlewares/verifyFirebaseToken.js";
 import { experienceRouter } from "./modules/experience";
 import { authRouter } from "./modules/auth";
+import { companyRouter } from "./modules/company";
 
 export const app = express();
 
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/experiences", experienceRouter);
 app.use("/auth", authRouter);
+app.use("/companies", companyRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });

@@ -11,7 +11,7 @@ export async function createExperienceController(req: Request, res: Response) {
   try {
     const experience = await createExperienceService({
       firebaseUid: req.user.uid,
-      companySlug: req.body.companySlug,
+      companyName: req.body.companyName,
       title: req.body.title,
       content: req.body.content,
       position: req.body.position,

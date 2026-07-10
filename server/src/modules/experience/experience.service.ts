@@ -1,10 +1,14 @@
+import { slugify } from "../../utils/slugify";
 import { findUserByFireBaseUid } from "../auth/auth.repository";
-import { findCompanyBySlug } from "../company";
+import {
+  createCompany,
+  findCompanyBySlug,
+} from "../company/company.repository";
 import { createExperience } from "./experience.repository";
 
 type CreateExperienceInput = {
   firebaseUid: string;
-  companySlug: string;
+  companyName: string;
   title: string;
   content: string;
   position: string;
@@ -19,10 +23,16 @@ export async function createExperienceService(input: CreateExperienceInput) {
     throw new Error("User not found");
   }
 
-  const company = await findCompanyBySlug(input.companySlug);
+  const normalizedCompanyName = input.companyName.trim();
+  const companySlug = slugify(normalizedCompanyName);
+
+  let company = await findCompanyBySlug(companySlug);
 
   if (!company) {
-    throw new Error("Company not found");
+    company = await createCompany({
+      name: normalizedCompanyName,
+      slug: companySlug,
+    });
   }
 
   return createExperience({
