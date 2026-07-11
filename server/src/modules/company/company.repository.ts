@@ -37,3 +37,31 @@ export function searchCompanies(query: string) {
     take: 8,
   });
 }
+
+export function findCompanyBySlugWithExperiences(slug: string) {
+  return prisma.company.findUnique({
+    where: { slug },
+    include: {
+      experiences: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          position: true,
+          type: true,
+          createdAt: true,
+          isAnonymous: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
