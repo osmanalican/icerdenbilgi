@@ -1,4 +1,8 @@
-import { createUser, findUserByFireBaseUid } from "./auth.repository";
+import {
+  createUser,
+  findUserByFireBaseUid,
+  updateUserByFirebaseUid,
+} from "./auth.repository";
 
 type SyncUserInput = {
   firebaseUid: string;
@@ -8,14 +12,16 @@ type SyncUserInput = {
 };
 
 function splitFullName(name?: string | null) {
-  if (!name) {
+  const normalizedName = name?.trim();
+
+  if (!normalizedName) {
     return {
       firstName: null,
       lastName: null,
     };
   }
 
-  const [firstName, ...rest] = name.trim().split(" ");
+  const [firstName, ...rest] = normalizedName.split(/\s+/);
 
   return {
     firstName,
@@ -25,12 +31,16 @@ function splitFullName(name?: string | null) {
 
 export async function syncUserService(input: SyncUserInput) {
   const existingUser = await findUserByFireBaseUid(input.firebaseUid);
+  const { firstName, lastName } = splitFullName(input.name);
 
   if (existingUser) {
-    return existingUser;
+    return updateUserByFirebaseUid(input.firebaseUid, {
+      email: input.email,
+      firstName: firstName ?? existingUser.firstName,
+      lastName: lastName ?? existingUser.lastName,
+      avatarUrl: input.avatarUrl ?? existingUser.avatarUrl,
+    });
   }
-
-  const { firstName, lastName } = splitFullName(input.name);
 
   return createUser({
     firebaseUid: input.firebaseUid,

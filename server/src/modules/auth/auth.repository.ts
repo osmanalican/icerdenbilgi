@@ -8,6 +8,13 @@ type CreateUserData = {
   avatarUrl?: string | null;
 };
 
+type UpdateUserData = {
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  avatarUrl?: string | null;
+};
+
 export function findUserByFireBaseUid(firebaseUid: string) {
   return prisma.user.findUnique({
     where: { firebaseUid },
@@ -16,6 +23,16 @@ export function findUserByFireBaseUid(firebaseUid: string) {
 
 export function createUser(data: CreateUserData) {
   return prisma.user.create({
+    data,
+  });
+}
+
+export function updateUserByFirebaseUid(
+  firebaseUid: string,
+  data: UpdateUserData,
+) {
+  return prisma.user.update({
+    where: { firebaseUid },
     data,
   });
 }

@@ -42,9 +42,16 @@ export function CompanyDetailPage() {
       <CompanyHeader companyName={company.name} experienceCount={company.experiences.length} />
 
       <div className="mt-8">
-        {company.experiences.map((experience) => (
-          <ExperienceRow key={experience.id} {...experience} />
-        ))}
+        {company.experiences.length === 0 ? (
+          <EmptyState
+            title="Henüz deneyim paylaşılmamış"
+            description="Bu şirket hakkındaki ilk deneyimi sen paylaşabilirsin."
+          />
+        ) : (
+          company.experiences.map((experience) => (
+            <ExperienceRow key={experience.id} {...experience} />
+          ))
+        )}
       </div>
     </div>
   );

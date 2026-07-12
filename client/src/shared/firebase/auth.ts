@@ -24,8 +24,11 @@ export async function registerWithEmail(
   const credentials = await createUserWithEmailAndPassword(auth, email, password);
 
   await updateProfile(credentials.user, {
-    displayName: `${firstName} ${lastName}`,
+    displayName: `${firstName.trim()} ${lastName.trim()}`,
   });
+
+  await credentials.user.reload();
+  await credentials.user.getIdToken(true);
 
   return credentials;
 }

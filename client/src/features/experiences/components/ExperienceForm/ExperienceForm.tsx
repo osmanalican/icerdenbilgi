@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/features/auth';
 import { createExperience } from '@/features/experiences/api';
 import type { ExperienceFormValues } from '@/features/experiences/types';
+import { Spinner } from '@/shared/components';
 
 type ExperienceFormProps = {
   fixedCompanyName?: string;
@@ -278,8 +279,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         <button
           type="submit"
           disabled={createExperienceMutation.isPending}
-          className="h-12 cursor-pointer rounded-2xl bg-zinc-950 px-6 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
+          {createExperienceMutation.isPending && <Spinner size="md" className="text-white" />}
           {createExperienceMutation.isPending ? 'Paylaşılıyor...' : 'Yayınla'}
         </button>
       </div>

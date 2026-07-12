@@ -1,3 +1,4 @@
+import { syncUser } from '@/features/auth/api';
 import type { RegisterFormValues } from '@/features/auth/types';
 import { getAuthErrorMessage } from '@/features/auth/utils/getAuthErrorMessage';
 import { registerWithEmail } from '@/shared/firebase';
@@ -20,7 +21,16 @@ export function RegisterForm() {
 
   async function onSubmit(values: RegisterFormValues) {
     try {
-      await registerWithEmail(values.firstName, values.lastName, values.email, values.password);
+      const credentials = await registerWithEmail(
+        values.firstName,
+        values.lastName,
+        values.email,
+        values.password,
+      );
+
+      const token = await credentials.user.getIdToken(true);
+
+      await syncUser(token);
     } catch (error) {
       setError('root', {
         message: getAuthErrorMessage(error),

@@ -1,3 +1,4 @@
+import { useAuth } from '@/features/auth';
 import { slugify } from '@/shared/utils';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +8,23 @@ type CompanyHeaderProps = {
 };
 
 export function CompanyHeader({ companyName, experienceCount }: CompanyHeaderProps) {
+  const { isAuthenticated } = useAuth();
+
+  const companySlug = slugify(companyName);
+  const shareSearch = `?sirket=${companySlug}`;
+
+  const linkTo = isAuthenticated
+    ? `/paylas${shareSearch}`
+    : {
+        pathname: '/giris',
+        state: {
+          from: {
+            pathname: '/paylas',
+            search: shareSearch,
+          },
+        },
+      };
+
   return (
     <section className="border-b border-zinc-200 pb-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -20,10 +38,11 @@ export function CompanyHeader({ companyName, experienceCount }: CompanyHeaderPro
           </p>
         </div>
 
-        <Link to={`/paylas?sirket=${slugify(companyName)}`}>
-          <button className="h-11 rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800">
-            Deneyim paylaş
-          </button>
+        <Link
+          to={linkTo}
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800"
+        >
+          {isAuthenticated ? 'Deneyim paylaş' : 'Giriş yap ve deneyim paylaş'}
         </Link>
       </div>
     </section>

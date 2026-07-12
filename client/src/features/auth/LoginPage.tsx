@@ -1,14 +1,27 @@
-import { LoginForm } from '@/features/auth/components/LoginForm';
+import { Navigate, useLocation } from 'react-router-dom';
+
 import { AuthCard } from './components/AuthCard';
+import { LoginForm } from '@/features/auth/components/LoginForm';
 import { useAuth } from '@/features/auth/hooks';
 import { signInWithGoogle } from '@/shared/firebase';
-import { Navigate, useLocation } from 'react-router-dom';
+
+type LoginLocationState = {
+  from?: {
+    pathname?: string;
+    search?: string;
+  };
+};
 
 export function LoginPage() {
   const location = useLocation();
   const { isAuthenticated, isLoading } = useAuth();
 
-  const from = location.state?.from?.pathname ?? '/';
+  const locationState = location.state as LoginLocationState | null;
+
+  const fromPathname = locationState?.from?.pathname ?? '/';
+  const fromSearch = locationState?.from?.search ?? '';
+
+  const from = `${fromPathname}${fromSearch}`;
 
   if (isLoading) {
     return null;
