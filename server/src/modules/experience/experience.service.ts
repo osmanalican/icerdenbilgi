@@ -4,7 +4,11 @@ import {
   createCompany,
   findCompanyBySlug,
 } from "../company/company.repository";
-import { createExperience } from "./experience.repository";
+import {
+  countPublishedExperiences,
+  createExperience,
+  findLatestExperiences,
+} from "./experience.repository";
 
 type CreateExperienceInput = {
   firebaseUid: string;
@@ -16,11 +20,16 @@ type CreateExperienceInput = {
   isAnonymous: boolean;
 };
 
+type GetExperiencesInput = {
+  page: number;
+  limit: number;
+};
+
 export async function createExperienceService(input: CreateExperienceInput) {
   const user = await findUserByFireBaseUid(input.firebaseUid);
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error("USER_NOT_FOUND");
   }
 
   const normalizedCompanyName = input.companyName.trim();
@@ -36,12 +45,32 @@ export async function createExperienceService(input: CreateExperienceInput) {
   }
 
   return createExperience({
-    title: input.title,
-    content: input.content,
-    position: input.position,
+    title: input.title.trim(),
+    content: input.content.trim(),
+    position: input.position.trim(),
     type: input.type,
     isAnonymous: input.isAnonymous,
     userId: user.id,
     companyId: company.id,
   });
+}
+
+export async function getExperiencesService({
+  page,
+  limit,
+}: GetExperiencesInput) {
+  const [experiences, total] = await Promise.all([
+    findLatestExperiences(page, limit),
+    countPublishedExperiences(),
+  ]);
+
+  return {
+    experiences,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 }
