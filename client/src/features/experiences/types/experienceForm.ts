@@ -1,10 +1,10 @@
-export type ExperienceType = 'interview' | 'work' | 'internship' | 'other';
+export type ExperienceFormType = 'interview' | 'work' | 'internship' | 'other';
 
 export type ExperienceFormValues = {
   companyName: string;
   position: string;
   title: string;
-  type: ExperienceType;
+  type: ExperienceFormType;
   content: string;
   isAnonymous: boolean;
 };
