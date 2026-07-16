@@ -1,3 +1,5 @@
+import 'server-only';
+
 import type { GetLatestExperiencesResponse } from "@/shared/types";
 
 type GetLatestExperiencesParams = {
@@ -5,10 +7,10 @@ type GetLatestExperiencesParams = {
   limit?: number;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.API_URL;
 
 if (!apiUrl) {
-  throw new Error("NEXT_PUBLIC_API_URL is missing.");
+  throw new Error("API_URL is missing.");
 }
 
 export async function getLatestExperiences({

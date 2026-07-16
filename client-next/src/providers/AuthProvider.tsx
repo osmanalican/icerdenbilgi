@@ -1,6 +1,6 @@
 "use client";
 
-import { syncUser } from "@/shared/api";
+import { syncUser } from "@/shared/api/client";
 import { AuthContext } from "@/shared/context";
 import { auth } from "@/shared/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";

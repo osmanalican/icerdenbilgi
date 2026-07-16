@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { HeroSection, RecentExperiences } from "./_components";
-import { getLatestExperiences } from "@/shared/api";
+import { getLatestExperiences } from "@/shared/api/server";
 
 export const metadata: Metadata = {
   title: "Şirket Mülakatları ve Çalışan Deneyimleri",

@@ -1,4 +1,4 @@
-import { apiFetch } from "@/shared/api";
+import { apiFetch } from "@/shared/api/client";
 
 export async function syncUser(token: string) {
   const response = await apiFetch("/auth/sync", {
