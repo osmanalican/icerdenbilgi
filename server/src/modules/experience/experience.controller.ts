@@ -13,7 +13,7 @@ export async function createExperienceController(req: Request, res: Response) {
 
   try {
     const experience = await createExperienceService({
-      firebaseUid: req.user.uid,
+      userId: req.user.id,
       companyName: req.body.companyName,
       title: req.body.title,
       content: req.body.content,
@@ -26,12 +26,6 @@ export async function createExperienceController(req: Request, res: Response) {
       experience,
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "USER_NOT_FOUND") {
-      return res.status(404).json({
-        message: "Kullanıcı bulunamadı.",
-      });
-    }
-
     console.error(error);
 
     return res.status(500).json({

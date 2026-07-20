@@ -1,7 +1,15 @@
 import { Router } from "express";
-import { verifyFirebaseToken } from "../../middlewares/verifyFirebaseToken";
-import { syncUserController } from "./auth.controller";
+
+import {
+  createSessionController,
+  logoutController,
+  verifySessionController,
+} from "./auth.controller";
 
 export const authRouter = Router();
 
-authRouter.post("/sync", verifyFirebaseToken, syncUserController);
+authRouter.post("/session", createSessionController);
+
+authRouter.get("/session", verifySessionController);
+
+authRouter.delete("/session", logoutController);
