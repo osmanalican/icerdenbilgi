@@ -1,13 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-
+import { useAuth } from "@/shared/hooks";
+import { createSession } from "@/shared/auth";
 import { registerWithEmail } from "@/shared/firebase";
-import { RegisterFormValues } from "@/shared/types";
+import type { RegisterFormValues } from "@/shared/types";
 import { getAuthErrorMessage } from "@/shared/utils";
-import { syncUser } from "@/shared/api/client";
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  redirectTo: string;
+};
+
+export function RegisterForm({ redirectTo }: RegisterFormProps) {
+  const router = useRouter();
+  const { refreshSession } = useAuth();
   const {
     register,
     handleSubmit,
@@ -31,9 +38,13 @@ export function RegisterForm() {
         values.password,
       );
 
-      const token = await credentials.user.getIdToken(true);
+      const idToken = await credentials.user.getIdToken(true);
 
-      await syncUser(token);
+      await createSession(idToken);
+      await refreshSession();
+
+      router.replace(redirectTo);
+      router.refresh();
     } catch (error) {
       setError("root", {
         message: getAuthErrorMessage(error),

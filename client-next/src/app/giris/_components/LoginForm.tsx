@@ -1,16 +1,26 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
+import { createSession } from "@/shared/auth";
 import { signInWithEmail } from "@/shared/firebase/auth";
 import { getAuthErrorMessage } from "@/shared/utils";
+import { useAuth } from "@/shared/hooks";
 
 type LoginFormValues = {
   email: string;
   password: string;
 };
 
-export function LoginForm() {
+type LoginFormProps = {
+  redirectTo: string;
+};
+
+export function LoginForm({ redirectTo }: LoginFormProps) {
+  const router = useRouter();
+  const { refreshSession } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -25,14 +35,22 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      await signInWithEmail(values.email, values.password);
+      const credentials = await signInWithEmail(values.email, values.password);
+
+      const idToken = await credentials.user.getIdToken(true);
+
+      await createSession(idToken);
+
+      await refreshSession();
+
+      router.replace(redirectTo);
+      router.refresh();
     } catch (error) {
       setError("root", {
         message: getAuthErrorMessage(error),
       });
     }
   }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>

@@ -1,46 +1,55 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-import { AuthCard } from "@/shared/components/AuthCard";
-import { RegisterForm } from "./RegisterForm";
-
-import { signInWithGoogle } from "@/shared/firebase";
 import { useAuth } from "@/shared/hooks";
+import { RegisterForm } from "./RegisterForm";
+import { AuthCard } from "@/shared/components/AuthCard";
+import { createSession } from "@/shared/auth";
+import { signInWithGoogle } from "@/shared/firebase";
+import { getAuthErrorMessage } from "@/shared/utils";
 
 type RegisterPageProps = {
   redirectTo?: string;
 };
 
-function getSafeRedirectPath(path?: string) {
-  if (!path) return "/";
-
-  if (!path.startsWith("/") || path.startsWith("//")) {
+function getSafeRedirectPath(redirectTo?: string) {
+  if (!redirectTo) {
     return "/";
   }
 
-  return path;
+  if (!redirectTo.startsWith("/") || redirectTo.startsWith("//")) {
+    return "/";
+  }
+
+  return redirectTo;
 }
 
 export function RegisterPage({ redirectTo }: RegisterPageProps) {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { refreshSession } = useAuth();
+  const [googleError, setGoogleError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const safeRedirect = getSafeRedirectPath(redirectTo);
-
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.replace(safeRedirect);
-    }
-  }, [isAuthenticated, isLoading, router, safeRedirect]);
+  const safeRedirectPath = getSafeRedirectPath(redirectTo);
 
   async function handleGoogleRegister() {
-    await signInWithGoogle();
-  }
+    setGoogleError(null);
+    setIsGoogleLoading(true);
 
-  if (isLoading || isAuthenticated) {
-    return null;
+    try {
+      const credentials = await signInWithGoogle();
+      const idToken = await credentials.user.getIdToken(true);
+
+      await createSession(idToken);
+      await refreshSession();
+
+      router.replace(safeRedirectPath);
+      router.refresh();
+    } catch (error) {
+      setGoogleError(getAuthErrorMessage(error));
+      setIsGoogleLoading(false);
+    }
   }
 
   return (
@@ -49,16 +58,32 @@ export function RegisterPage({ redirectTo }: RegisterPageProps) {
       description="İçerdenBilgi'ye katılmaya birkaç adım kaldı."
       footerText="Zaten hesabın var mı?"
       footerLinkText="Giriş yap"
-      footerLinkTo="/giris"
+      footerLinkTo={
+        redirectTo
+          ? `/giris?redirect=${encodeURIComponent(safeRedirectPath)}`
+          : "/giris"
+      }
     >
       <div className="space-y-4">
         <button
           type="button"
           onClick={handleGoogleRegister}
-          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium hover:bg-zinc-50"
+          disabled={isGoogleLoading}
+          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Google ile devam et
+          {isGoogleLoading
+            ? "Google ile kayıt olunuyor..."
+            : "Google ile devam et"}
         </button>
+
+        {googleError && (
+          <p
+            role="alert"
+            className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600"
+          >
+            {googleError}
+          </p>
+        )}
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-zinc-200" />
@@ -66,7 +91,7 @@ export function RegisterPage({ redirectTo }: RegisterPageProps) {
           <div className="h-px flex-1 bg-zinc-200" />
         </div>
 
-        <RegisterForm />
+        <RegisterForm redirectTo={safeRedirectPath} />
       </div>
     </AuthCard>
   );

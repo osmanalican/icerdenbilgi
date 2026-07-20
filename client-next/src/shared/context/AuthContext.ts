@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { createContext } from 'react';
-import type { User } from 'firebase/auth';
+import { SessionUser } from "@/shared/auth";
+import { createContext } from "react";
 
 export type AuthContextValue = {
-  user: User | null;
+  user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  refreshSession: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

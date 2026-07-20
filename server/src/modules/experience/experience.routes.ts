@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { verifyFirebaseToken } from "../../middlewares/verifyFirebaseToken";
+import { requireSession } from "../../middlewares/requireSession";
 import {
   createExperienceController,
   getExperiencesController,
@@ -10,4 +10,4 @@ export const experienceRouter = Router();
 
 experienceRouter.get("/", getExperiencesController);
 
-experienceRouter.post("/", verifyFirebaseToken, createExperienceController);
+experienceRouter.post("/", requireSession, createExperienceController);

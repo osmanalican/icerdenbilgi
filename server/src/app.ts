@@ -1,15 +1,25 @@
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import express from "express";
+
 import { prisma } from "./lib/prisma.js";
-import { verifyFirebaseToken } from "./middlewares/verifyFirebaseToken.js";
-import { experienceRouter } from "./modules/experience";
+import { requireSession } from "./middlewares/requireSession";
 import { authRouter } from "./modules/auth";
 import { companyRouter } from "./modules/company";
+import { experienceRouter } from "./modules/experience";
 
 export const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
+app.use(cookieParser());
+
 app.use("/experiences", experienceRouter);
 app.use("/auth", authRouter);
 app.use("/companies", companyRouter);
@@ -27,7 +37,7 @@ app.get("/db-health", async (_req, res) => {
   });
 });
 
-app.get("/me", verifyFirebaseToken, (req, res) => {
+app.get("/me", requireSession, (req, res) => {
   res.json({
     user: req.user,
   });

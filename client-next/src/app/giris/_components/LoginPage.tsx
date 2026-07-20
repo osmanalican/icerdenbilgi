@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { useAuth } from "@/shared/hooks";
 import { LoginForm } from "./LoginForm";
 import { AuthCard } from "@/shared/components/AuthCard";
+import { createSession } from "@/shared/auth";
 import { signInWithGoogle } from "@/shared/firebase";
-import { useAuth } from "@/shared/hooks";
+import { getAuthErrorMessage } from "@/shared/utils";
 
 type LoginPageProps = {
   redirectTo?: string;
@@ -26,22 +27,30 @@ function getSafeRedirectPath(redirectTo?: string) {
 
 export function LoginPage({ redirectTo }: LoginPageProps) {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { refreshSession } = useAuth();
+  const [googleError, setGoogleError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const safeRedirectPath = getSafeRedirectPath(redirectTo);
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.replace(safeRedirectPath);
-    }
-  }, [isAuthenticated, isLoading, router, safeRedirectPath]);
-
   async function handleGoogleLogin() {
-    await signInWithGoogle();
-  }
+    setGoogleError(null);
+    setIsGoogleLoading(true);
 
-  if (isLoading || isAuthenticated) {
-    return null;
+    try {
+      const credentials = await signInWithGoogle();
+      const idToken = await credentials.user.getIdToken(true);
+
+      await createSession(idToken);
+
+      await refreshSession();
+
+      router.replace(safeRedirectPath);
+      router.refresh();
+    } catch (error) {
+      setGoogleError(getAuthErrorMessage(error));
+      setIsGoogleLoading(false);
+    }
   }
 
   return (
@@ -50,24 +59,42 @@ export function LoginPage({ redirectTo }: LoginPageProps) {
       description="İçerdenBilgi’ye devam etmek için hesabına giriş yap."
       footerText="Henüz hesabın yok mu?"
       footerLinkText="Katıl"
-      footerLinkTo="/kayit"
+      footerLinkTo={
+        redirectTo
+          ? `/kayit?redirect=${encodeURIComponent(safeRedirectPath)}`
+          : "/kayit"
+      }
     >
       <div className="space-y-4">
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50"
+          disabled={isGoogleLoading}
+          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Google ile devam et
+          {isGoogleLoading
+            ? "Google ile giriş yapılıyor..."
+            : "Google ile devam et"}
         </button>
+
+        {googleError && (
+          <p
+            role="alert"
+            className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600"
+          >
+            {googleError}
+          </p>
+        )}
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-zinc-200" />
+
           <span className="text-xs text-zinc-400">veya</span>
+
           <div className="h-px flex-1 bg-zinc-200" />
         </div>
 
-        <LoginForm />
+        <LoginForm redirectTo={safeRedirectPath} />
       </div>
     </AuthCard>
   );

@@ -1,25 +1,33 @@
 "use client";
 
+import { deleteSession } from "@/shared/auth";
 import { logout } from "@/shared/firebase";
 import { useAuth } from "@/shared/hooks";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function Header() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  const { user, isAuthenticated, isLoading, refreshSession } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  const userInitial = user?.displayName?.[0] ?? user?.email?.[0] ?? "?";
-
+  const userInitial = user?.firstName?.[0] ?? user?.email?.[0] ?? "?";
   async function handleLogout() {
     try {
+      await deleteSession();
       await logout();
+      await refreshSession();
+
       setIsUserMenuOpen(false);
+
+      router.replace("/");
+      router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
     }
   }
-
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -67,7 +75,9 @@ export function Header() {
                     </span>
 
                     <span className="hidden max-w-32 truncate font-medium sm:block">
-                      {user?.displayName ?? user?.email}
+                      {user?.firstName
+                        ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                        : user?.email}
                     </span>
 
                     <span
@@ -85,7 +95,9 @@ export function Header() {
                     >
                       <div className="px-3 py-2">
                         <p className="truncate text-sm font-medium text-zinc-900">
-                          {user?.displayName ?? "Kullanıcı"}
+                          {user?.firstName
+                            ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                            : "Kullanıcı"}
                         </p>
 
                         <p className="mt-0.5 truncate text-xs text-zinc-400">
