@@ -1,16 +1,27 @@
-import 'server-only';
+import "server-only";
 
-import type { GetCompanyResponse } from '@/shared/types';
+import type { GetCompanyResponse } from "@/shared/types";
 
-export async function getCompanyBySlug(slug: string) {
+type GetCompanyBySlugOptions = {
+  page?: number;
+};
+
+export async function getCompanyBySlug(
+  slug: string,
+  { page = 1 }: GetCompanyBySlugOptions = {},
+) {
   const apiUrl = process.env.API_URL;
 
   if (!apiUrl) {
-    throw new Error('API_URL is missing.');
+    throw new Error("API_URL is missing.");
   }
 
+  const searchParams = new URLSearchParams({
+    page: String(page),
+  });
+
   const response = await fetch(
-    `${apiUrl}/companies/${encodeURIComponent(slug)}`,
+    `${apiUrl}/companies/${encodeURIComponent(slug)}?${searchParams.toString()}`,
     {
       next: {
         revalidate: 60,
@@ -23,10 +34,10 @@ export async function getCompanyBySlug(slug: string) {
   }
 
   if (!response.ok) {
-    throw new Error('Company could not be fetched.');
+    throw new Error("Company could not be fetched.");
   }
 
   const data: GetCompanyResponse = await response.json();
 
-  return data.company;
+  return data;
 }

@@ -5,6 +5,11 @@ type CreateCompanyData = {
   slug: string;
 };
 
+type FindCompanyWithExperiencesOptions = {
+  page: number;
+  limit: number;
+};
+
 export function findCompanyBySlug(slug: string) {
   return prisma.company.findUnique({
     where: { slug },
@@ -38,11 +43,27 @@ export function searchCompanies(query: string) {
   });
 }
 
-export function findCompanyBySlugWithExperiences(slug: string) {
+export function findCompanyBySlugWithExperiences(
+  slug: string,
+  { page, limit }: FindCompanyWithExperiencesOptions,
+) {
+  const skip = (page - 1) * limit;
+
   return prisma.company.findUnique({
     where: { slug },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logoUrl: true,
+      _count: {
+        select: {
+          experiences: true,
+        },
+      },
       experiences: {
+        skip,
+        take: limit,
         orderBy: {
           createdAt: "desc",
         },

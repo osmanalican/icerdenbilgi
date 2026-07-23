@@ -15,7 +15,7 @@ export function CompanyHeader({
   companySlug,
   experienceCount,
 }: CompanyHeaderProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const sharePath = `/paylas?sirket=${encodeURIComponent(companySlug)}`;
 
@@ -40,12 +40,19 @@ export function CompanyHeader({
           </p>
         </div>
 
-        <Link
-          href={href}
-          className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800"
-        >
-          {isAuthenticated ? "Deneyim paylaş" : "Giriş yap ve deneyim paylaş"}
-        </Link>
+        {isLoading ? (
+          <div
+            aria-hidden="true"
+            className="h-11 w-56 animate-pulse rounded-xl bg-zinc-200"
+          />
+        ) : (
+          <Link
+            href={href}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-950 px-5 text-sm font-medium text-white transition hover:bg-zinc-800"
+          >
+            {isAuthenticated ? "Deneyim paylaş" : "Giriş yap ve deneyim paylaş"}
+          </Link>
+        )}
       </div>
     </section>
   );
