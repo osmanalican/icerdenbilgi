@@ -19,9 +19,18 @@ export type Company = {
   name: string;
   slug: string;
   logoUrl: string | null;
+  experienceCount: number;
   experiences: CompanyExperience[];
+};
+
+export type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 };
 
 export type GetCompanyResponse = {
   company: Company;
+  pagination: Pagination;
 };

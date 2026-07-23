@@ -4,6 +4,7 @@ import {
   getCompanyBySlugService,
   searchCompaniesService,
 } from "./company.service";
+import { COMPANY_EXPERIENCE_PAGE_SIZE } from "./company.constants";
 
 type CompanyParams = {
   slug: string;
@@ -37,12 +38,18 @@ export async function getCompanyBySlugController(
     });
   }
 
-  try {
-    const company = await getCompanyBySlugService(slug);
+  const rawPage = typeof req.query.page === "string" ? req.query.page : "1";
+  const parsedPage = Number(rawPage);
 
-    return res.status(200).json({
-      company,
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+  try {
+    const result = await getCompanyBySlugService(slug, {
+      page,
+      limit: COMPANY_EXPERIENCE_PAGE_SIZE,
     });
+
+    return res.status(200).json(result);
   } catch (error) {
     if (error instanceof Error && error.message === "COMPANY_NOT_FOUND") {
       return res.status(404).json({

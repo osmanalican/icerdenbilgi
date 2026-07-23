@@ -5,20 +5,37 @@ import { EmptyState } from "@/shared/components";
 import { getCompanyBySlug } from "@/shared/api/server";
 import { CompanyHeader } from "@/app/[slug]/_components/CompanyHeader";
 import { ExperienceRow } from "@/app/[slug]/_components/ExperienceRow";
+import { CompanyPagination } from "@/app/[slug]/_components/CompanyPagination";
 
 type CompanyPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    page?: string;
+  }>;
 };
+
+function parsePositiveInteger(value: string | undefined, fallback: number) {
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+    return fallback;
+  }
+
+  return parsedValue;
+}
 
 export async function generateMetadata({
   params,
 }: CompanyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const company = await getCompanyBySlug(slug);
 
-  if (!company) {
+  const result = await getCompanyBySlug(slug, {
+    page: 1,
+  });
+
+  if (!result) {
     return {
       title: "Şirket bulunamadı",
       description: "Aradığınız şirket İçerdenBilgi üzerinde bulunamadı.",
@@ -28,6 +45,8 @@ export async function generateMetadata({
       },
     };
   }
+
+  const { company } = result;
 
   const title = `${company.name} Çalışan Deneyimleri ve Mülakat Süreçleri`;
   const description =
@@ -50,20 +69,30 @@ export async function generateMetadata({
   };
 }
 
-export default async function CompanyPage({ params }: CompanyPageProps) {
-  const { slug } = await params;
-  const company = await getCompanyBySlug(slug);
+export default async function CompanyPage({
+  params,
+  searchParams,
+}: CompanyPageProps) {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
 
-  if (!company) {
+  const page = parsePositiveInteger(query.page, 1);
+
+  const result = await getCompanyBySlug(slug, {
+    page,
+  });
+
+  if (!result) {
     notFound();
   }
+
+  const { company, pagination } = result;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
       <CompanyHeader
         companyName={company.name}
         companySlug={company.slug}
-        experienceCount={company.experiences.length}
+        experienceCount={company.experienceCount}
       />
 
       <div className="mt-8">
@@ -78,6 +107,12 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           ))
         )}
       </div>
+
+      <CompanyPagination
+        slug={company.slug}
+        currentPage={pagination.page}
+        totalPages={pagination.totalPages}
+      />
     </div>
   );
 }

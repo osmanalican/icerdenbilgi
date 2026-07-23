@@ -1,0 +1,1 @@
+export const COMPANY_EXPERIENCE_PAGE_SIZE = 4;
