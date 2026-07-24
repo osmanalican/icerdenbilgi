@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { EmptyState } from "@/shared/components";
 import { getCompanyBySlug } from "@/shared/api/server";
@@ -86,6 +86,15 @@ export default async function CompanyPage({
   }
 
   const { company, pagination } = result;
+
+  if (pagination.totalPages > 0 && page > pagination.totalPages) {
+    const redirectUrl =
+      pagination.totalPages === 1
+        ? `/${company.slug}`
+        : `/${company.slug}?page=${pagination.totalPages}`;
+
+    redirect(redirectUrl);
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
