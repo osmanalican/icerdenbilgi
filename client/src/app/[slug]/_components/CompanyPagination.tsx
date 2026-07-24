@@ -15,7 +15,8 @@ export function CompanyPagination({
     return null;
   }
 
-  const createPageHref = (page: number) => `/${slug}?page=${page}`;
+  const createPageHref = (page: number) =>
+    page === 1 ? `/${slug}` : `/${slug}?page=${page}`;
 
   const visiblePages = Array.from(
     { length: totalPages },
