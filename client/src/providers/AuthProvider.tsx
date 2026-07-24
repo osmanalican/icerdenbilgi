@@ -1,20 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { AuthContext } from "@/shared/context";
-import { getSession, SessionUser } from "@/shared/auth";
+import { getSession } from "@/shared/auth";
+import type { SessionUser } from "@/shared/auth";
 
 type AuthProviderProps = {
   children: ReactNode;
+  initialUser: SessionUser | null;
 };
 
-export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<SessionUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({ children, initialUser }: AuthProviderProps) {
+  const [user, setUser] = useState<SessionUser | null>(initialUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refreshSession = useCallback(async () => {
+    setIsLoading(true);
+
     try {
       const session = await getSession();
 
@@ -27,11 +31,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void refreshSession();
-  }, [refreshSession]);
 
   const value = useMemo(
     () => ({
