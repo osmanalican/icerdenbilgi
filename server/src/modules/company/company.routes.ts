@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { optionalSession } from "../../middlewares/optionalSession";
 import {
   getCompanyBySlugController,
   searchCompaniesController,
@@ -8,4 +9,5 @@ import {
 export const companyRouter = Router();
 
 companyRouter.get("/search", searchCompaniesController);
-companyRouter.get("/:slug", getCompanyBySlugController);
+
+companyRouter.get("/:slug", optionalSession, getCompanyBySlugController);

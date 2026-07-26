@@ -47,6 +47,7 @@ export async function getCompanyBySlugController(
     const result = await getCompanyBySlugService(slug, {
       page,
       limit: COMPANY_EXPERIENCE_PAGE_SIZE,
+      currentUserId: req.user?.id,
     });
 
     return res.status(200).json(result);

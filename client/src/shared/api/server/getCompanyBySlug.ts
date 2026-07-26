@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cookies } from "next/headers";
+
 import type { GetCompanyResponse } from "@/shared/types";
 
 type GetCompanyBySlugOptions = {
@@ -20,12 +22,20 @@ export async function getCompanyBySlug(
     page: String(page),
   });
 
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get("session");
+
+  const headers = new Headers();
+
+  if (sessionCookie) {
+    headers.set("Cookie", `session=${sessionCookie.value}`);
+  }
+
   const response = await fetch(
     `${apiUrl}/companies/${encodeURIComponent(slug)}?${searchParams.toString()}`,
     {
-      next: {
-        revalidate: 60,
-      },
+      headers,
+      cache: "no-store",
     },
   );
 
@@ -37,7 +47,5 @@ export async function getCompanyBySlug(
     throw new Error("Company could not be fetched.");
   }
 
-  const data: GetCompanyResponse = await response.json();
-
-  return data;
+  return response.json() as Promise<GetCompanyResponse>;
 }

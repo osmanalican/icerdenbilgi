@@ -4,8 +4,13 @@ import {
   findCompanyBySlug,
 } from "../company/company.repository";
 import {
+  countHelpfulVotes,
   countPublishedExperiences,
   createExperience,
+  createHelpfulVote,
+  deleteHelpfulVote,
+  findExperienceById,
+  findHelpfulVote,
   findLatestExperiences,
 } from "./experience.repository";
 
@@ -22,6 +27,7 @@ type CreateExperienceInput = {
 type GetExperiencesInput = {
   page: number;
   limit: number;
+  currentUserId?: string;
 };
 
 export async function createExperienceService(input: CreateExperienceInput) {
@@ -51,19 +57,70 @@ export async function createExperienceService(input: CreateExperienceInput) {
 export async function getExperiencesService({
   page,
   limit,
+  currentUserId,
 }: GetExperiencesInput) {
   const [experiences, total] = await Promise.all([
-    findLatestExperiences(page, limit),
+    findLatestExperiences(page, limit, currentUserId),
     countPublishedExperiences(),
   ]);
 
   return {
-    experiences,
+    experiences: experiences.map((experience) => ({
+      id: experience.id,
+      title: experience.title,
+      content: experience.content,
+      position: experience.position,
+      type: experience.type,
+      isAnonymous: experience.isAnonymous,
+      createdAt: experience.createdAt,
+      company: experience.company,
+      user: experience.user,
+
+      helpfulCount: experience._count.helpfulVotes,
+
+      hasVoted: experience.helpfulVotes
+        ? experience.helpfulVotes.length > 0
+        : false,
+    })),
+
     pagination: {
       page,
       limit,
       total,
       totalPages: Math.ceil(total / limit),
     },
+  };
+}
+
+export async function toggleHelpfulVoteService(
+  userId: string,
+  experienceId: string,
+) {
+  const experience = await findExperienceById(experienceId);
+
+  if (!experience || experience.status !== "PUBLISHED") {
+    throw new Error("EXPERIENCE_NOT_FOUND");
+  }
+
+  const existingVote = await findHelpfulVote(userId, experienceId);
+
+  if (existingVote) {
+    await deleteHelpfulVote(userId, experienceId);
+
+    const helpfulCount = await countHelpfulVotes(experienceId);
+
+    return {
+      isHelpful: false,
+      helpfulCount,
+    };
+  }
+
+  await createHelpfulVote(userId, experienceId);
+
+  const helpfulCount = await countHelpfulVotes(experienceId);
+
+  return {
+    isHelpful: true,
+    helpfulCount,
   };
 }

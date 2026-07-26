@@ -1,15 +1,24 @@
-import { ThumbsUp } from "lucide-react";
 import Link from "next/link";
 
 import type { LatestExperience } from "@/shared/types";
 import { formatDate } from "@/shared/utils";
+import { HelpfulButton } from "@/shared/components/HelpfulButton";
 
 type ExperienceCardProps = {
   experience: LatestExperience;
 };
 
 export function ExperienceCard({ experience }: ExperienceCardProps) {
-  const { title, content, position, createdAt, company, _count } = experience;
+  const {
+    id,
+    title,
+    content,
+    position,
+    createdAt,
+    company,
+    helpfulCount,
+    hasVoted,
+  } = experience;
 
   return (
     <article className="rounded-2xl border border-zinc-200 bg-slate-100 p-5 shadow-sm transition hover:border-zinc-300 hover:shadow-md">
@@ -29,13 +38,11 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
       <div className="mt-5 flex items-center justify-between text-sm text-zinc-400">
         <time dateTime={createdAt}>{formatDate(createdAt)}</time>
 
-        <div
-          className="flex items-center gap-1"
-          aria-label={`${_count.helpfulVotes} kişi faydalı buldu`}
-        >
-          <ThumbsUp className="h-4 w-4" aria-hidden="true" />
-          <span>{_count.helpfulVotes}</span>
-        </div>
+        <HelpfulButton
+          experienceId={id}
+          initialHelpfulCount={helpfulCount}
+          initialHasVoted={hasVoted}
+        />
       </div>
     </article>
   );

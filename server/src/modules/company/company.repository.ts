@@ -8,6 +8,7 @@ type CreateCompanyData = {
 type FindCompanyWithExperiencesOptions = {
   page: number;
   limit: number;
+  currentUserId?: string;
 };
 
 export function findCompanyBySlug(slug: string) {
@@ -45,7 +46,7 @@ export function searchCompanies(query: string) {
 
 export function findCompanyBySlugWithExperiences(
   slug: string,
-  { page, limit }: FindCompanyWithExperiencesOptions,
+  { page, limit, currentUserId }: FindCompanyWithExperiencesOptions,
 ) {
   const skip = (page - 1) * limit;
 
@@ -56,12 +57,21 @@ export function findCompanyBySlugWithExperiences(
       name: true,
       slug: true,
       logoUrl: true,
+
       _count: {
         select: {
-          experiences: true,
+          experiences: {
+            where: {
+              status: "PUBLISHED",
+            },
+          },
         },
       },
+
       experiences: {
+        where: {
+          status: "PUBLISHED",
+        },
         skip,
         take: limit,
         orderBy: {
@@ -75,12 +85,30 @@ export function findCompanyBySlugWithExperiences(
           type: true,
           createdAt: true,
           isAnonymous: true,
+
           user: {
             select: {
               firstName: true,
               lastName: true,
             },
           },
+
+          _count: {
+            select: {
+              helpfulVotes: true,
+            },
+          },
+
+          helpfulVotes: currentUserId
+            ? {
+                where: {
+                  userId: currentUserId,
+                },
+                select: {
+                  id: true,
+                },
+              }
+            : false,
         },
       },
     },

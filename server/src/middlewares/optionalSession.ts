@@ -2,20 +2,16 @@ import type { NextFunction, Request, Response } from "express";
 
 import { resolveSessionUser } from "./resolveSessionUser.js";
 
-export async function requireSession(
+export async function optionalSession(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) {
   const user = await resolveSessionUser(req);
 
-  if (!user) {
-    return res.status(401).json({
-      message: "Geçerli bir oturum bulunamadı.",
-    });
+  if (user) {
+    req.user = user;
   }
-
-  req.user = user;
 
   next();
 }

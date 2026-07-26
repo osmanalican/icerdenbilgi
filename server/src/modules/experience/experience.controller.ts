@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
+
 import {
   createExperienceService,
   getExperiencesService,
+  toggleHelpfulVoteService,
 } from "./experience.service";
 
 export async function createExperienceController(req: Request, res: Response) {
@@ -47,6 +49,7 @@ export async function getExperiencesController(req: Request, res: Response) {
     const result = await getExperiencesService({
       page,
       limit,
+      currentUserId: req.user?.id,
     });
 
     return res.status(200).json(result);
@@ -55,6 +58,40 @@ export async function getExperiencesController(req: Request, res: Response) {
 
     return res.status(500).json({
       message: "Deneyimler getirilirken bir hata oluştu.",
+    });
+  }
+}
+
+export async function toggleHelpfulVoteController(req: Request, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({
+      message: "Bu işlem için giriş yapmalısın.",
+    });
+  }
+
+  const experienceId = req.params.experienceId;
+
+  if (typeof experienceId !== "string" || !experienceId) {
+    return res.status(400).json({
+      message: "Geçersiz deneyim.",
+    });
+  }
+
+  try {
+    const result = await toggleHelpfulVoteService(req.user.id, experienceId);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Error && error.message === "EXPERIENCE_NOT_FOUND") {
+      return res.status(404).json({
+        message: "Deneyim bulunamadı.",
+      });
+    }
+
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Faydalı oyu güncellenirken bir hata oluştu.",
     });
   }
 }
