@@ -8,6 +8,8 @@ export type LatestExperience = {
   type: ExperienceType;
   isAnonymous: boolean;
   createdAt: string;
+  helpfulCount: number;
+  hasVoted: boolean;
   company: {
     id: string;
     name: string;
@@ -17,9 +19,6 @@ export type LatestExperience = {
   user: {
     firstName: string | null;
     lastName: string | null;
-  };
-  _count: {
-    helpfulVotes: number;
   };
 };
 

@@ -8,12 +8,14 @@ export type CompanyExperience = {
   type: ExperienceType;
   isAnonymous: boolean;
   createdAt: string;
+  helpfulCount: number;
+  hasVoted: boolean;
+
   user: {
     firstName: string | null;
     lastName: string | null;
   };
 };
-
 export type Company = {
   id: string;
   name: string;

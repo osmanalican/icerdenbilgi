@@ -16,7 +16,11 @@ export function createExperience(data: CreateExperienceData) {
   });
 }
 
-export function findLatestExperiences(page: number, limit: number) {
+export function findLatestExperiences(
+  page: number,
+  limit: number,
+  currentUserId?: string,
+) {
   const skip = (page - 1) * limit;
 
   return prisma.experience.findMany({
@@ -36,6 +40,7 @@ export function findLatestExperiences(page: number, limit: number) {
       type: true,
       isAnonymous: true,
       createdAt: true,
+
       company: {
         select: {
           id: true,
@@ -44,17 +49,30 @@ export function findLatestExperiences(page: number, limit: number) {
           logoUrl: true,
         },
       },
+
       user: {
         select: {
           firstName: true,
           lastName: true,
         },
       },
+
       _count: {
         select: {
           helpfulVotes: true,
         },
       },
+
+      helpfulVotes: currentUserId
+        ? {
+            where: {
+              userId: currentUserId,
+            },
+            select: {
+              id: true,
+            },
+          }
+        : false,
     },
   });
 }
@@ -63,6 +81,57 @@ export function countPublishedExperiences() {
   return prisma.experience.count({
     where: {
       status: "PUBLISHED",
+    },
+  });
+}
+
+export function findExperienceById(id: string) {
+  return prisma.experience.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+}
+
+export function findHelpfulVote(userId: string, experienceId: string) {
+  return prisma.helpfulVote.findUnique({
+    where: {
+      userId_experienceId: {
+        userId,
+        experienceId,
+      },
+    },
+  });
+}
+
+export function createHelpfulVote(userId: string, experienceId: string) {
+  return prisma.helpfulVote.create({
+    data: {
+      userId,
+      experienceId,
+    },
+  });
+}
+
+export function deleteHelpfulVote(userId: string, experienceId: string) {
+  return prisma.helpfulVote.delete({
+    where: {
+      userId_experienceId: {
+        userId,
+        experienceId,
+      },
+    },
+  });
+}
+
+export function countHelpfulVotes(experienceId: string) {
+  return prisma.helpfulVote.count({
+    where: {
+      experienceId,
     },
   });
 }

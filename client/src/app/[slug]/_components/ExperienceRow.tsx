@@ -2,6 +2,7 @@ import { BriefcaseBusiness, UserRound } from "lucide-react";
 
 import type { CompanyExperience, ExperienceType } from "@/shared/types";
 import { formatDate } from "@/shared/utils";
+import { HelpfulButton } from "@/shared/components/HelpfulButton";
 
 type ExperienceRowProps = {
   experience: CompanyExperience;
@@ -51,9 +52,17 @@ export function ExperienceRow({ experience }: ExperienceRowProps) {
         {content}
       </p>
 
-      <div className="mt-4 flex items-center gap-1.5 text-xs text-zinc-400">
-        <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
-        {authorName}
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
+          {authorName}
+        </div>
+
+        <HelpfulButton
+          experienceId={experience.id}
+          initialHelpfulCount={experience.helpfulCount}
+          initialHasVoted={experience.hasVoted}
+        />
       </div>
     </article>
   );

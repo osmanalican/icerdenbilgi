@@ -6,6 +6,7 @@ import {
 type GetCompanyBySlugOptions = {
   page: number;
   limit: number;
+  currentUserId?: string;
 };
 
 export async function searchCompaniesService(rawQuery: string) {
@@ -20,11 +21,12 @@ export async function searchCompaniesService(rawQuery: string) {
 
 export async function getCompanyBySlugService(
   slug: string,
-  { page, limit }: GetCompanyBySlugOptions,
+  { page, limit, currentUserId }: GetCompanyBySlugOptions,
 ) {
   const company = await findCompanyBySlugWithExperiences(slug, {
     page,
     limit,
+    currentUserId,
   });
 
   if (!company) {
@@ -40,7 +42,20 @@ export async function getCompanyBySlugService(
       name: company.name,
       slug: company.slug,
       logoUrl: company.logoUrl,
-      experiences: company.experiences,
+      experiences: company.experiences.map((experience) => ({
+        id: experience.id,
+        title: experience.title,
+        content: experience.content,
+        position: experience.position,
+        type: experience.type,
+        createdAt: experience.createdAt,
+        isAnonymous: experience.isAnonymous,
+        user: experience.user,
+        helpfulCount: experience._count.helpfulVotes,
+        hasVoted: experience.helpfulVotes
+          ? experience.helpfulVotes.length > 0
+          : false,
+      })),
       experienceCount: total,
     },
     pagination: {
