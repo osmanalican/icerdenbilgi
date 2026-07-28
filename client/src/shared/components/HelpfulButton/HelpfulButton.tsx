@@ -43,14 +43,27 @@ export function HelpfulButton({
       return;
     }
 
-    try {
-      setIsPending(true);
+    const previousIsHelpful = isHelpful;
+    const previousHelpfulCount = helpfulCount;
 
+    const optimisticIsHelpful = !previousIsHelpful;
+    const optimisticHelpfulCount = previousIsHelpful
+      ? Math.max(0, previousHelpfulCount - 1)
+      : previousHelpfulCount + 1;
+
+    setIsHelpful(optimisticIsHelpful);
+    setHelpfulCount(optimisticHelpfulCount);
+    setIsPending(true);
+
+    try {
       const result = await toggleHelpfulVote(experienceId);
 
       setIsHelpful(result.isHelpful);
       setHelpfulCount(result.helpfulCount);
     } catch (error) {
+      setIsHelpful(previousIsHelpful);
+      setHelpfulCount(previousHelpfulCount);
+
       console.error("Helpful vote failed:", error);
     } finally {
       setIsPending(false);
@@ -61,9 +74,8 @@ export function HelpfulButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={isPending}
       aria-pressed={isHelpful}
-      className="inline-flex items-center cursor-pointer gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex items-center cursor-pointer gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900"
     >
       <ThumbsUp
         className={`h-4 w-4 ${isHelpful ? "fill-current" : ""}`}
