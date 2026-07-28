@@ -11,7 +11,14 @@ type CreateExperienceRequest = {
   isAnonymous: boolean;
 };
 
-export async function createExperience(data: CreateExperienceRequest) {
+type CreateExperienceResponse = {
+  experienceId: string;
+  companySlug: string;
+};
+
+export async function createExperience(
+  data: CreateExperienceRequest,
+): Promise<CreateExperienceResponse> {
   const response = await apiFetch("/experiences", {
     method: "POST",
     body: JSON.stringify(data),

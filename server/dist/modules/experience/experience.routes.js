@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.experienceRouter = void 0;
+const express_1 = require("express");
+const optionalSession_1 = require("../../middlewares/optionalSession");
+const requireSession_1 = require("../../middlewares/requireSession");
+const experience_controller_1 = require("./experience.controller");
+exports.experienceRouter = (0, express_1.Router)();
+exports.experienceRouter.get("/", optionalSession_1.optionalSession, experience_controller_1.getExperiencesController);
+exports.experienceRouter.post("/", requireSession_1.requireSession, experience_controller_1.createExperienceController);
+exports.experienceRouter.post("/:experienceId/helpful", requireSession_1.requireSession, experience_controller_1.toggleHelpfulVoteController);

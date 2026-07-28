@@ -1,8 +1,7 @@
 import { slugify } from "../../utils/slugify";
-import {
-  createCompany,
-  findCompanyBySlug,
-} from "../company/company.repository";
+import { upsertCompany } from "../company/company.repository";
+import type { CreateExperienceInput } from "./experience.schema";
+
 import {
   countHelpfulVotes,
   countPublishedExperiences,
@@ -14,44 +13,39 @@ import {
   findLatestExperiences,
 } from "./experience.repository";
 
-type CreateExperienceInput = {
-  userId: string;
-  companyName: string;
-  title: string;
-  content: string;
-  position: string;
-  type: "INTERVIEW" | "WORK" | "INTERNSHIP" | "OTHER";
-  isAnonymous: boolean;
-};
-
 type GetExperiencesInput = {
   page: number;
   limit: number;
   currentUserId?: string;
 };
+type CreateExperienceServiceInput = CreateExperienceInput & {
+  userId: string;
+};
 
-export async function createExperienceService(input: CreateExperienceInput) {
-  const normalizedCompanyName = input.companyName.trim();
-  const companySlug = slugify(normalizedCompanyName);
+export async function createExperienceService(
+  input: CreateExperienceServiceInput,
+) {
+  const companySlug = slugify(input.companyName);
 
-  let company = await findCompanyBySlug(companySlug);
+  const company = await upsertCompany({
+    name: input.companyName,
+    slug: companySlug,
+  });
 
-  if (!company) {
-    company = await createCompany({
-      name: normalizedCompanyName,
-      slug: companySlug,
-    });
-  }
-
-  return createExperience({
-    title: input.title.trim(),
-    content: input.content.trim(),
-    position: input.position.trim(),
+  const experience = await createExperience({
+    title: input.title,
+    content: input.content,
+    position: input.position,
     type: input.type,
     isAnonymous: input.isAnonymous,
     userId: input.userId,
     companyId: company.id,
   });
+
+  return {
+    experienceId: experience.id,
+    companySlug: company.slug,
+  };
 }
 
 export async function getExperiencesService({

@@ -11,6 +11,24 @@ type FindCompanyWithExperiencesOptions = {
   currentUserId?: string;
 };
 
+type UpsertCompanyData = {
+  name: string;
+  slug: string;
+};
+
+export function upsertCompany(data: UpsertCompanyData) {
+  return prisma.company.upsert({
+    where: {
+      slug: data.slug,
+    },
+    update: {},
+    create: {
+      name: data.name,
+      slug: data.slug,
+    },
+  });
+}
+
 export function findCompanyBySlug(slug: string) {
   return prisma.company.findUnique({
     where: { slug },

@@ -5,6 +5,7 @@ import {
   getExperiencesService,
   toggleHelpfulVoteService,
 } from "./experience.service";
+import { createExperienceSchema } from "./experience.schema";
 
 export async function createExperienceController(req: Request, res: Response) {
   if (!req.user) {
@@ -13,20 +14,24 @@ export async function createExperienceController(req: Request, res: Response) {
     });
   }
 
+  const validationResult = createExperienceSchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    const fieldErrors = validationResult.error.flatten().fieldErrors;
+
+    return res.status(400).json({
+      message: "Lütfen form alanlarını kontrol et.",
+      errors: fieldErrors,
+    });
+  }
+
   try {
-    const experience = await createExperienceService({
+    const result = await createExperienceService({
       userId: req.user.id,
-      companyName: req.body.companyName,
-      title: req.body.title,
-      content: req.body.content,
-      position: req.body.position,
-      type: req.body.type,
-      isAnonymous: req.body.isAnonymous,
+      ...validationResult.data,
     });
 
-    return res.status(201).json({
-      experience,
-    });
+    return res.status(201).json(result);
   } catch (error) {
     console.error(error);
 

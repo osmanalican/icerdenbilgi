@@ -20,6 +20,8 @@ export async function searchCompaniesController(req: Request, res: Response) {
       companies,
     });
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
       message: "Şirketler aranırken bir hata oluştu.",
     });

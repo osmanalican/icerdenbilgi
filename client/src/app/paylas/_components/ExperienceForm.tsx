@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { Spinner } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
@@ -43,12 +44,11 @@ const errorClassName = "mt-2 text-sm text-red-600";
 
 export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
   const { user } = useAuth();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     setError,
     clearErrors,
@@ -87,21 +87,11 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
 
   async function onSubmit(values: ExperienceFormValues) {
     clearErrors("root");
-    setSuccessMessage(null);
 
     try {
-      await createExperienceMutation.mutateAsync(values);
+      const result = await createExperienceMutation.mutateAsync(values);
 
-      reset({
-        companyName: fixedCompanyName ?? "",
-        position: "",
-        type: "other",
-        title: "",
-        content: "",
-        isAnonymous: true,
-      });
-
-      setSuccessMessage("Deneyimin başarıyla paylaşıldı.");
+      router.push(`/${result.companySlug}`);
     } catch (error) {
       setError("root", {
         type: "server",
@@ -283,15 +273,6 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
           className="rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700"
         >
           {errors.root.message}
-        </p>
-      )}
-
-      {successMessage && (
-        <p
-          role="status"
-          className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
-        >
-          {successMessage}
         </p>
       )}
 
