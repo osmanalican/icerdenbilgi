@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import { Spinner } from "@/shared/components";
+import { CompanyAutocomplete, Spinner } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
 import { createExperience } from "@/app/paylas/_api";
 
@@ -47,9 +46,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
   const router = useRouter();
 
   const {
+    control,
     register,
     handleSubmit,
-    setValue,
     setError,
     clearErrors,
     formState: { errors },
@@ -63,10 +62,6 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
       isAnonymous: true,
     },
   });
-
-  useEffect(() => {
-    setValue("companyName", fixedCompanyName ?? "");
-  }, [fixedCompanyName, setValue]);
 
   const createExperienceMutation = useMutation({
     mutationFn: async (values: ExperienceFormValues) => {
@@ -117,34 +112,55 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
           Şirket adı
         </label>
 
-        {fixedCompanyName ? (
-          <input
-            id="companyName"
-            {...register("companyName")}
-            readOnly
-            className={disabledInputClassName}
-          />
-        ) : (
-          <>
-            <input
-              id="companyName"
-              {...register("companyName", {
-                required: "Şirket adı zorunludur.",
-                minLength: {
-                  value: 2,
-                  message: "Şirket adı en az 2 karakter olmalı.",
-                },
-              })}
-              placeholder="Örn. Trendyol"
-              className={inputClassName}
-              aria-invalid={Boolean(errors.companyName)}
-            />
+        <Controller
+          name="companyName"
+          control={control}
+          rules={{
+            required: "Şirket adı zorunludur.",
+            minLength: {
+              value: 2,
+              message: "Şirket adı en az 2 karakter olmalı.",
+            },
+            maxLength: {
+              value: 100,
+              message: "Şirket adı en fazla 100 karakter olabilir.",
+            },
+            validate: (value) =>
+              value.trim().length >= 2 || "Şirket adı en az 2 karakter olmalı.",
+          }}
+          render={({ field, fieldState }) =>
+            fixedCompanyName ? (
+              <>
+                <input
+                  id="companyName"
+                  name={field.name}
+                  ref={field.ref}
+                  value={field.value}
+                  onBlur={field.onBlur}
+                  readOnly
+                  className={disabledInputClassName}
+                  aria-invalid={Boolean(fieldState.error)}
+                />
 
-            {errors.companyName?.message && (
-              <p className={errorClassName}>{errors.companyName.message}</p>
-            )}
-          </>
-        )}
+                {fieldState.error?.message && (
+                  <p role="alert" className={errorClassName}>
+                    {fieldState.error.message}
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="mt-2">
+                <CompanyAutocomplete
+                  id="companyName"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  placeholder="Örn. Trendyol"
+                />
+              </div>
+            )
+          }
+        />
       </div>
 
       <div>
@@ -160,6 +176,12 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
               value: 2,
               message: "Pozisyon en az 2 karakter olmalı.",
             },
+            maxLength: {
+              value: 100,
+              message: "Pozisyon en fazla 100 karakter olabilir.",
+            },
+            validate: (value) =>
+              value.trim().length >= 2 || "Pozisyon en az 2 karakter olmalı.",
           })}
           placeholder="Örn. Satış uzmanı, frontend developer, mimar..."
           className={inputClassName}
@@ -167,7 +189,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         />
 
         {errors.position?.message && (
-          <p className={errorClassName}>{errors.position.message}</p>
+          <p role="alert" className={errorClassName}>
+            {errors.position.message}
+          </p>
         )}
       </div>
 
@@ -183,6 +207,7 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
               required: "Deneyim türü zorunludur.",
             })}
             className="h-12 w-full cursor-pointer appearance-none rounded-2xl border border-zinc-200 bg-zinc-50 px-4 pr-12 text-zinc-950 outline-none transition focus:border-zinc-400 focus:bg-white"
+            aria-invalid={Boolean(errors.type)}
           >
             <option value="interview">Mülakat</option>
             <option value="work">Çalışma deneyimi</option>
@@ -196,7 +221,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         </div>
 
         {errors.type?.message && (
-          <p className={errorClassName}>{errors.type.message}</p>
+          <p role="alert" className={errorClassName}>
+            {errors.type.message}
+          </p>
         )}
       </div>
 
@@ -217,6 +244,8 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
               value: 120,
               message: "Başlık en fazla 120 karakter olabilir.",
             },
+            validate: (value) =>
+              value.trim().length >= 5 || "Başlık en az 5 karakter olmalı.",
           })}
           placeholder="Deneyimini özetleyen kısa bir başlık"
           className={inputClassName}
@@ -224,7 +253,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         />
 
         {errors.title?.message && (
-          <p className={errorClassName}>{errors.title.message}</p>
+          <p role="alert" className={errorClassName}>
+            {errors.title.message}
+          </p>
         )}
       </div>
 
@@ -245,6 +276,8 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
               value: 5000,
               message: "Deneyim en fazla 5000 karakter olabilir.",
             },
+            validate: (value) =>
+              value.trim().length >= 20 || "Deneyim en az 20 karakter olmalı.",
           })}
           rows={7}
           placeholder="Süreç nasıldı, neler soruldu, çalışma ortamı nasıldı?"
@@ -253,7 +286,9 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         />
 
         {errors.content?.message && (
-          <p className={errorClassName}>{errors.content.message}</p>
+          <p role="alert" className={errorClassName}>
+            {errors.content.message}
+          </p>
         )}
       </div>
 
