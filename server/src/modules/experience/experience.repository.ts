@@ -1,23 +1,19 @@
 import { prisma } from "../../lib/prisma";
 
-type CreateExperienceData = {
+type ExperienceData = {
   title: string;
   content: string;
   position: string;
   type: "INTERVIEW" | "WORK" | "INTERNSHIP" | "OTHER";
   isAnonymous: boolean;
-  userId: string;
   companyId: string;
 };
 
-type UpdateExperienceData = {
-  title: string;
-  content: string;
-  position: string;
-  type: "INTERVIEW" | "WORK" | "INTERNSHIP" | "OTHER";
-  isAnonymous: boolean;
-  companyId: string;
+type CreateExperienceData = ExperienceData & {
+  userId: string;
 };
+
+type UpdateExperienceData = ExperienceData;
 
 export function createExperience(data: CreateExperienceData) {
   return prisma.experience.create({
