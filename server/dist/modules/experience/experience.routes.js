@@ -8,4 +8,5 @@ const experience_controller_1 = require("./experience.controller");
 exports.experienceRouter = (0, express_1.Router)();
 exports.experienceRouter.get("/", optionalSession_1.optionalSession, experience_controller_1.getExperiencesController);
 exports.experienceRouter.post("/", requireSession_1.requireSession, experience_controller_1.createExperienceController);
+exports.experienceRouter.put("/:experienceId", requireSession_1.requireSession, experience_controller_1.updateExperienceController);
 exports.experienceRouter.post("/:experienceId/helpful", requireSession_1.requireSession, experience_controller_1.toggleHelpfulVoteController);

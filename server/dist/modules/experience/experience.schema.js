@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createExperienceSchema = void 0;
+exports.updateExperienceSchema = exports.createExperienceSchema = void 0;
 const zod_1 = require("zod");
 const experienceTypes = ["INTERVIEW", "WORK", "INTERNSHIP", "OTHER"];
-exports.createExperienceSchema = zod_1.z.object({
+const experiencePayloadSchema = zod_1.z.object({
     companyName: zod_1.z
         .string({
         error: "Şirket adı zorunludur.",
@@ -39,3 +39,5 @@ exports.createExperienceSchema = zod_1.z.object({
         error: "Anonim paylaşım bilgisi geçersiz.",
     }),
 });
+exports.createExperienceSchema = experiencePayloadSchema;
+exports.updateExperienceSchema = experiencePayloadSchema;

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createExperienceController = createExperienceController;
 exports.getExperiencesController = getExperiencesController;
+exports.updateExperienceController = updateExperienceController;
 exports.toggleHelpfulVoteController = toggleHelpfulVoteController;
 const experience_service_1 = require("./experience.service");
 const experience_schema_1 = require("./experience.schema");
@@ -53,14 +54,59 @@ async function getExperiencesController(req, res) {
         });
     }
 }
+async function updateExperienceController(req, res) {
+    if (!req.user) {
+        return res.status(401).json({
+            message: "Yetkisiz işlem.",
+        });
+    }
+    const { experienceId } = req.params;
+    if (!experienceId) {
+        return res.status(400).json({
+            message: "Geçersiz deneyim.",
+        });
+    }
+    const validationResult = experience_schema_1.updateExperienceSchema.safeParse(req.body);
+    if (!validationResult.success) {
+        const fieldErrors = validationResult.error.flatten().fieldErrors;
+        return res.status(400).json({
+            message: "Lütfen form alanlarını kontrol et.",
+            errors: fieldErrors,
+        });
+    }
+    try {
+        const result = await (0, experience_service_1.updateExperienceService)({
+            experienceId,
+            userId: req.user.id,
+            ...validationResult.data,
+        });
+        return res.status(200).json(result);
+    }
+    catch (error) {
+        if (error instanceof Error && error.message === "EXPERIENCE_NOT_FOUND") {
+            return res.status(404).json({
+                message: "Deneyim bulunamadı.",
+            });
+        }
+        if (error instanceof Error && error.message === "FORBIDDEN") {
+            return res.status(403).json({
+                message: "Bu deneyimi düzenleme yetkin bulunmuyor.",
+            });
+        }
+        console.error(error);
+        return res.status(500).json({
+            message: "Deneyim güncellenirken bir hata oluştu.",
+        });
+    }
+}
 async function toggleHelpfulVoteController(req, res) {
     if (!req.user) {
         return res.status(401).json({
             message: "Bu işlem için giriş yapmalısın.",
         });
     }
-    const experienceId = req.params.experienceId;
-    if (typeof experienceId !== "string" || !experienceId) {
+    const { experienceId } = req.params;
+    if (!experienceId) {
         return res.status(400).json({
             message: "Geçersiz deneyim.",
         });

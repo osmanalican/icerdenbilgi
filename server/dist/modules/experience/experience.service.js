@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createExperienceService = createExperienceService;
 exports.getExperiencesService = getExperiencesService;
 exports.toggleHelpfulVoteService = toggleHelpfulVoteService;
+exports.updateExperienceService = updateExperienceService;
 const slugify_1 = require("../../utils/slugify");
 const company_repository_1 = require("../company/company.repository");
 const experience_repository_1 = require("./experience.repository");
@@ -74,5 +75,31 @@ async function toggleHelpfulVoteService(userId, experienceId) {
     return {
         isHelpful: true,
         helpfulCount,
+    };
+}
+async function updateExperienceService(input) {
+    const existingExperience = await (0, experience_repository_1.findExperienceForUpdate)(input.experienceId);
+    if (!existingExperience) {
+        throw new Error("EXPERIENCE_NOT_FOUND");
+    }
+    if (existingExperience.userId !== input.userId) {
+        throw new Error("FORBIDDEN");
+    }
+    const companySlug = (0, slugify_1.slugify)(input.companyName);
+    const company = await (0, company_repository_1.upsertCompany)({
+        name: input.companyName,
+        slug: companySlug,
+    });
+    const experience = await (0, experience_repository_1.updateExperience)(input.experienceId, {
+        title: input.title,
+        content: input.content,
+        position: input.position,
+        type: input.type,
+        isAnonymous: input.isAnonymous,
+        companyId: company.id,
+    });
+    return {
+        experienceId: experience.id,
+        companySlug: experience.company.slug,
     };
 }

@@ -10,6 +10,15 @@ type CreateExperienceData = {
   companyId: string;
 };
 
+type UpdateExperienceData = {
+  title: string;
+  content: string;
+  position: string;
+  type: "INTERVIEW" | "WORK" | "INTERNSHIP" | "OTHER";
+  isAnonymous: boolean;
+  companyId: string;
+};
+
 export function createExperience(data: CreateExperienceData) {
   return prisma.experience.create({
     data,
@@ -97,6 +106,18 @@ export function findExperienceById(id: string) {
   });
 }
 
+export function findExperienceForUpdate(id: string) {
+  return prisma.experience.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      userId: true,
+    },
+  });
+}
+
 export function findHelpfulVote(userId: string, experienceId: string) {
   return prisma.helpfulVote.findUnique({
     where: {
@@ -132,6 +153,23 @@ export function countHelpfulVotes(experienceId: string) {
   return prisma.helpfulVote.count({
     where: {
       experienceId,
+    },
+  });
+}
+
+export function updateExperience(id: string, data: UpdateExperienceData) {
+  return prisma.experience.update({
+    where: {
+      id,
+    },
+    data,
+    select: {
+      id: true,
+      company: {
+        select: {
+          slug: true,
+        },
+      },
     },
   });
 }

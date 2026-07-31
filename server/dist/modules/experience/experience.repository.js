@@ -4,10 +4,12 @@ exports.createExperience = createExperience;
 exports.findLatestExperiences = findLatestExperiences;
 exports.countPublishedExperiences = countPublishedExperiences;
 exports.findExperienceById = findExperienceById;
+exports.findExperienceForUpdate = findExperienceForUpdate;
 exports.findHelpfulVote = findHelpfulVote;
 exports.createHelpfulVote = createHelpfulVote;
 exports.deleteHelpfulVote = deleteHelpfulVote;
 exports.countHelpfulVotes = countHelpfulVotes;
+exports.updateExperience = updateExperience;
 const prisma_1 = require("../../lib/prisma");
 function createExperience(data) {
     return prisma_1.prisma.experience.create({
@@ -83,6 +85,17 @@ function findExperienceById(id) {
         },
     });
 }
+function findExperienceForUpdate(id) {
+    return prisma_1.prisma.experience.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+            userId: true,
+        },
+    });
+}
 function findHelpfulVote(userId, experienceId) {
     return prisma_1.prisma.helpfulVote.findUnique({
         where: {
@@ -115,6 +128,22 @@ function countHelpfulVotes(experienceId) {
     return prisma_1.prisma.helpfulVote.count({
         where: {
             experienceId,
+        },
+    });
+}
+function updateExperience(id, data) {
+    return prisma_1.prisma.experience.update({
+        where: {
+            id,
+        },
+        data,
+        select: {
+            id: true,
+            company: {
+                select: {
+                    slug: true,
+                },
+            },
         },
     });
 }

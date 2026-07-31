@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const experienceTypes = ["INTERVIEW", "WORK", "INTERNSHIP", "OTHER"] as const;
 
-export const createExperienceSchema = z.object({
+const experiencePayloadSchema = z.object({
   companyName: z
     .string({
       error: "Şirket adı zorunludur.",
@@ -44,4 +44,10 @@ export const createExperienceSchema = z.object({
   }),
 });
 
+export const createExperienceSchema = experiencePayloadSchema;
+
+export const updateExperienceSchema = experiencePayloadSchema;
+
 export type CreateExperienceInput = z.infer<typeof createExperienceSchema>;
+
+export type UpdateExperienceInput = z.infer<typeof updateExperienceSchema>;

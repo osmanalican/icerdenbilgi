@@ -6,6 +6,7 @@ import {
   createExperienceController,
   getExperiencesController,
   toggleHelpfulVoteController,
+  updateExperienceController,
 } from "./experience.controller";
 
 export const experienceRouter = Router();
@@ -13,6 +14,12 @@ export const experienceRouter = Router();
 experienceRouter.get("/", optionalSession, getExperiencesController);
 
 experienceRouter.post("/", requireSession, createExperienceController);
+
+experienceRouter.put(
+  "/:experienceId",
+  requireSession,
+  updateExperienceController,
+);
 
 experienceRouter.post(
   "/:experienceId/helpful",

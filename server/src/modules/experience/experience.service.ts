@@ -1,7 +1,9 @@
 import { slugify } from "../../utils/slugify";
 import { upsertCompany } from "../company/company.repository";
-import type { CreateExperienceInput } from "./experience.schema";
-
+import type {
+  CreateExperienceInput,
+  UpdateExperienceInput,
+} from "./experience.schema";
 import {
   countHelpfulVotes,
   countPublishedExperiences,
@@ -9,8 +11,10 @@ import {
   createHelpfulVote,
   deleteHelpfulVote,
   findExperienceById,
+  findExperienceForUpdate,
   findHelpfulVote,
   findLatestExperiences,
+  updateExperience,
 } from "./experience.repository";
 
 type GetExperiencesInput = {
@@ -19,6 +23,11 @@ type GetExperiencesInput = {
   currentUserId?: string;
 };
 type CreateExperienceServiceInput = CreateExperienceInput & {
+  userId: string;
+};
+
+type UpdateExperienceServiceInput = UpdateExperienceInput & {
+  experienceId: string;
   userId: string;
 };
 
@@ -116,5 +125,40 @@ export async function toggleHelpfulVoteService(
   return {
     isHelpful: true,
     helpfulCount,
+  };
+}
+
+export async function updateExperienceService(
+  input: UpdateExperienceServiceInput,
+) {
+  const existingExperience = await findExperienceForUpdate(input.experienceId);
+
+  if (!existingExperience) {
+    throw new Error("EXPERIENCE_NOT_FOUND");
+  }
+
+  if (existingExperience.userId !== input.userId) {
+    throw new Error("FORBIDDEN");
+  }
+
+  const companySlug = slugify(input.companyName);
+
+  const company = await upsertCompany({
+    name: input.companyName,
+    slug: companySlug,
+  });
+
+  const experience = await updateExperience(input.experienceId, {
+    title: input.title,
+    content: input.content,
+    position: input.position,
+    type: input.type,
+    isAnonymous: input.isAnonymous,
+    companyId: company.id,
+  });
+
+  return {
+    experienceId: experience.id,
+    companySlug: experience.company.slug,
   };
 }
