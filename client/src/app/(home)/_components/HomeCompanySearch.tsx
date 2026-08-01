@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { useDebounce, useSearchCompanies } from "@/shared/hooks";
@@ -15,6 +16,7 @@ const popularCompanies = [
 export function HomeCompanySearch() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
+  const listboxId = useId();
 
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +32,7 @@ export function HomeCompanySearch() {
   } = useSearchCompanies(normalizedQuery);
 
   const canSearch = query.trim().length >= 2;
+
   const safeActiveIndex =
     activeIndex >= 0 && activeIndex < companies.length ? activeIndex : -1;
 
@@ -130,10 +133,17 @@ export function HomeCompanySearch() {
     }
   }
 
+  const shouldShowDropdown = isOpen && canSearch;
+
   return (
-    <div ref={containerRef} className="relative mt-10 max-w-2xl">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
+    <div ref={containerRef} className="relative mt-8 w-full max-w-2xl sm:mt-10">
+      <div className="flex w-full gap-2 sm:gap-3">
+        <div className="relative min-w-0 flex-1">
+          <Search
+            className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:hidden"
+            aria-hidden="true"
+          />
+
           <input
             type="search"
             role="combobox"
@@ -153,16 +163,22 @@ export function HomeCompanySearch() {
             }}
             onKeyDown={handleKeyDown}
             aria-label="Şirket ara"
-            aria-expanded={isOpen && canSearch}
+            aria-expanded={shouldShowDropdown}
             aria-autocomplete="list"
-            aria-controls="company-search-results"
+            aria-controls={shouldShowDropdown ? listboxId : undefined}
+            aria-activedescendant={
+              safeActiveIndex >= 0
+                ? `${listboxId}-option-${safeActiveIndex}`
+                : undefined
+            }
             autoComplete="off"
-            placeholder="Trendyol, Getir, Peak Games..."
-            className="h-12 w-full rounded-xl border border-zinc-300 bg-white px-4 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-500"
+            placeholder="Şirket ara..."
+            className="h-12 w-full rounded-xl border border-zinc-300 bg-white pr-4 pl-11 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-500 sm:pl-4 sm:text-base"
           />
-          {isOpen && canSearch && (
+
+          {shouldShowDropdown && (
             <div
-              id="company-search-results"
+              id={listboxId}
               role="listbox"
               className="absolute top-full left-0 z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-zinc-200 bg-white p-1 shadow-lg"
             >
@@ -185,8 +201,11 @@ export function HomeCompanySearch() {
 
                   return (
                     <button
+                      id={`${listboxId}-option-${index}`}
                       key={company.id}
                       type="button"
+                      role="option"
+                      aria-selected={isActive}
                       onMouseEnter={() => setActiveIndex(index)}
                       onMouseDown={(event) => {
                         event.preventDefault();
@@ -236,27 +255,32 @@ export function HomeCompanySearch() {
           type="button"
           onClick={handleSearch}
           disabled={!canSearch}
-          className="h-12 cursor-pointer rounded-xl bg-zinc-950 px-6 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label="Şirket ara"
+          className="flex h-12 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-zinc-950 px-4 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
         >
-          Ara
+          <Search className="h-4 w-4 sm:hidden" aria-hidden="true" />
+
+          <span className="hidden sm:inline">Ara</span>
         </button>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-1 text-sm text-zinc-500">
+      <div className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-2 text-xs text-zinc-500 sm:text-sm">
         <span>Popüler:</span>
 
         {popularCompanies.map((company, index) => (
-          <span key={company.slug} className="flex items-center gap-1">
+          <span key={company.slug} className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={() => navigateToCompany(company.slug)}
-              className="cursor-pointer text-zinc-800 transition hover:text-zinc-950 hover:underline"
+              className="cursor-pointer text-zinc-700 transition hover:text-zinc-950 hover:underline"
             >
               {company.name}
             </button>
 
             {index < popularCompanies.length - 1 && (
-              <span aria-hidden="true">·</span>
+              <span className="text-zinc-300" aria-hidden="true">
+                ·
+              </span>
             )}
           </span>
         ))}
