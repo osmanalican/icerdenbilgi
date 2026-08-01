@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 import "./globals.css";
 
@@ -7,6 +8,7 @@ import { Providers } from "@/providers";
 import { Header } from "@/shared/components/Header";
 import { Footer } from "@/shared/components/Footer";
 import { getServerSession } from "@/shared/auth/getServerSession";
+
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -42,6 +44,8 @@ export default async function RootLayout({
             <Footer />
           </div>
         </Providers>
+
+        <Toaster position="top-right" richColors closeButton />
       </body>
     </html>
   );
