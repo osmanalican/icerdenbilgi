@@ -1,3 +1,5 @@
+import { HomeCompanySearch } from "@/app/(home)/_components";
+
 export function HeroSection() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-20">
@@ -14,29 +16,7 @@ export function HeroSection() {
         keşfet.
       </p>
 
-      <div className="mt-10 flex max-w-2xl flex-col gap-3 sm:flex-row">
-        <input
-          type="search"
-          name="company"
-          aria-label="Şirket ara"
-          placeholder="Trendyol, Getir, Peak Games..."
-          className="h-12 flex-1 rounded-xl border border-zinc-300 bg-white px-4 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-500"
-        />
-
-        <button
-          type="button"
-          className="h-12 cursor-pointer rounded-xl bg-zinc-950 px-6 font-medium text-white transition hover:bg-zinc-800"
-        >
-          Ara
-        </button>
-      </div>
-
-      <p className="mt-4 text-sm text-zinc-500">
-        Popüler: <span className="text-zinc-800">Trendyol</span> ·{" "}
-        <span className="text-zinc-800">Getir</span> ·{" "}
-        <span className="text-zinc-800">Hepsiburada</span> ·{" "}
-        <span className="text-zinc-800">Insider</span>
-      </p>
+      <HomeCompanySearch />
     </section>
   );
 }
