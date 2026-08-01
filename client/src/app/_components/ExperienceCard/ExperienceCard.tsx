@@ -29,13 +29,13 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
         {company.name}
       </Link>
 
-      <h2 className="mt-2 break-words text-base font-semibold leading-6 text-zinc-950 sm:text-lg sm:leading-7">
+      <h2 className="mt-2 wrap-break-word text-base font-semibold leading-6 text-zinc-950 sm:text-lg sm:leading-7">
         {title}
       </h2>
 
-      <p className="mt-1 break-words text-sm text-zinc-500">{position}</p>
+      <p className="mt-1 wrap-break-word text-sm text-zinc-500">{position}</p>
 
-      <p className="mt-4 line-clamp-3 break-words text-sm leading-6 text-zinc-600 sm:leading-7">
+      <p className="mt-4 line-clamp-3 wrap-break-word text-sm leading-6 text-zinc-600 sm:leading-7">
         {content}
       </p>
 
