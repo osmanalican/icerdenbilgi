@@ -5,6 +5,7 @@ import { requireSession } from "../../middlewares/requireSession";
 
 import {
   createExperienceController,
+  deleteExperienceController,
   getExperienceForEditController,
   getExperiencesController,
   toggleHelpfulVoteController,
@@ -27,6 +28,12 @@ experienceRouter.put(
   "/:experienceId",
   requireSession,
   updateExperienceController,
+);
+
+experienceRouter.delete(
+  "/:experienceId",
+  requireSession,
+  deleteExperienceController,
 );
 
 experienceRouter.post(

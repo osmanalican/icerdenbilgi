@@ -191,3 +191,11 @@ export function findExperienceForEdit(id: string) {
     },
   });
 }
+
+export function deleteExperience(id: string) {
+  return prisma.experience.delete({
+    where: {
+      id,
+    },
+  });
+}

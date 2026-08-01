@@ -9,6 +9,7 @@ import {
   countPublishedExperiences,
   createExperience,
   createHelpfulVote,
+  deleteExperience,
   deleteHelpfulVote,
   findExperienceById,
   findExperienceForEdit,
@@ -188,5 +189,26 @@ export async function getExperienceForEditService(
       content: experience.content,
       isAnonymous: experience.isAnonymous,
     },
+  };
+}
+
+export async function deleteExperienceService(
+  experienceId: string,
+  userId: string,
+) {
+  const experience = await findExperienceForUpdate(experienceId);
+
+  if (!experience) {
+    throw new Error("EXPERIENCE_NOT_FOUND");
+  }
+
+  if (experience.userId !== userId) {
+    throw new Error("FORBIDDEN");
+  }
+
+  await deleteExperience(experienceId);
+
+  return {
+    success: true,
   };
 }

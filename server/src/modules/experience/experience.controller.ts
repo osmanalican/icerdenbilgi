@@ -5,6 +5,7 @@ import {
   getExperienceForEditService,
   getExperiencesService,
   toggleHelpfulVoteService,
+  deleteExperienceService,
   updateExperienceService,
 } from "./experience.service";
 
@@ -211,6 +212,49 @@ export async function getExperienceForEditController(
 
     return res.status(500).json({
       message: "Deneyim bilgileri alınırken bir hata oluştu.",
+    });
+  }
+}
+
+export async function deleteExperienceController(
+  req: Request<ExperienceParams>,
+  res: Response,
+) {
+  if (!req.user) {
+    return res.status(401).json({
+      message: "Yetkisiz işlem.",
+    });
+  }
+
+  const { experienceId } = req.params;
+
+  if (!experienceId) {
+    return res.status(400).json({
+      message: "Geçersiz deneyim.",
+    });
+  }
+
+  try {
+    const result = await deleteExperienceService(experienceId, req.user.id);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Error && error.message === "EXPERIENCE_NOT_FOUND") {
+      return res.status(404).json({
+        message: "Deneyim bulunamadı.",
+      });
+    }
+
+    if (error instanceof Error && error.message === "FORBIDDEN") {
+      return res.status(403).json({
+        message: "Bu deneyimi silme yetkin bulunmuyor.",
+      });
+    }
+
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Deneyim silinirken bir hata oluştu.",
     });
   }
 }
