@@ -9,6 +9,7 @@ import { updateExperience } from "@/shared/api/client";
 import { CompanyAutocomplete, Spinner } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
 import type { ExperienceType } from "@/shared/types";
+import { toast } from "sonner";
 
 type ExperienceFormValues = {
   companyName: string;
@@ -137,16 +138,26 @@ export function ExperienceForm(props: ExperienceFormProps) {
     try {
       const result = await experienceMutation.mutateAsync(values);
 
+      if (isEditMode) {
+        toast.success("Değişiklikler kaydedildi.");
+      } else {
+        toast.success("Deneyimin yayınlandı.");
+      }
+
       router.push(`/${result.companySlug}`);
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : isEditMode
+            ? "Deneyim güncellenirken beklenmeyen bir hata oluştu."
+            : "Deneyim paylaşılırken beklenmeyen bir hata oluştu.";
+
+      toast.error(message);
+
       setError("root", {
         type: "server",
-        message:
-          error instanceof Error
-            ? error.message
-            : isEditMode
-              ? "Deneyim güncellenirken beklenmeyen bir hata oluştu."
-              : "Deneyim paylaşılırken beklenmeyen bir hata oluştu.",
+        message,
       });
     }
   }
