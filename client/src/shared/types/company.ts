@@ -10,12 +10,14 @@ export type CompanyExperience = {
   createdAt: string;
   helpfulCount: number;
   hasVoted: boolean;
+  canEdit: boolean;
 
   user: {
     firstName: string | null;
     lastName: string | null;
   };
 };
+
 export type Company = {
   id: string;
   name: string;

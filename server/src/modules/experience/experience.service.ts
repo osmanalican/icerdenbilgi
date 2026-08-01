@@ -11,6 +11,7 @@ import {
   createHelpfulVote,
   deleteHelpfulVote,
   findExperienceById,
+  findExperienceForEdit,
   findExperienceForUpdate,
   findHelpfulVote,
   findLatestExperiences,
@@ -160,5 +161,32 @@ export async function updateExperienceService(
   return {
     experienceId: experience.id,
     companySlug: experience.company.slug,
+  };
+}
+
+export async function getExperienceForEditService(
+  experienceId: string,
+  userId: string,
+) {
+  const experience = await findExperienceForEdit(experienceId);
+
+  if (!experience) {
+    throw new Error("EXPERIENCE_NOT_FOUND");
+  }
+
+  if (experience.userId !== userId) {
+    throw new Error("FORBIDDEN");
+  }
+
+  return {
+    experience: {
+      id: experience.id,
+      companyName: experience.company.name,
+      position: experience.position,
+      type: experience.type,
+      title: experience.title,
+      content: experience.content,
+      isAnonymous: experience.isAnonymous,
+    },
   };
 }

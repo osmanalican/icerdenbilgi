@@ -1,6 +1,8 @@
-import { BriefcaseBusiness, UserRound } from "lucide-react";
+import Link from "next/link";
+import { BriefcaseBusiness, Pencil, UserRound } from "lucide-react";
 
 import type { CompanyExperience, ExperienceType } from "@/shared/types";
+
 import { formatDate } from "@/shared/utils";
 import { HelpfulButton } from "@/shared/components/HelpfulButton";
 
@@ -16,8 +18,16 @@ const experienceTypeLabels: Record<ExperienceType, string> = {
 };
 
 export function ExperienceRow({ experience }: ExperienceRowProps) {
-  const { title, position, content, type, createdAt, isAnonymous, user } =
-    experience;
+  const {
+    title,
+    position,
+    content,
+    type,
+    createdAt,
+    isAnonymous,
+    user,
+    canEdit,
+  } = experience;
 
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
@@ -34,6 +44,7 @@ export function ExperienceRow({ experience }: ExperienceRowProps) {
 
             <span className="flex items-center gap-1.5 text-xs text-zinc-400">
               <BriefcaseBusiness className="h-3.5 w-3.5" aria-hidden="true" />
+
               {position}
             </span>
           </div>
@@ -43,9 +54,21 @@ export function ExperienceRow({ experience }: ExperienceRowProps) {
           </h2>
         </div>
 
-        <time dateTime={createdAt} className="shrink-0 text-xs text-zinc-400">
-          {formatDate(createdAt)}
-        </time>
+        <div className="flex shrink-0 items-center gap-3">
+          {canEdit && (
+            <Link
+              href={`/paylas/${experience.id}/duzenle`}
+              className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition hover:text-zinc-950"
+            >
+              <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+              Düzenle
+            </Link>
+          )}
+
+          <time dateTime={createdAt} className="text-xs text-zinc-400">
+            {formatDate(createdAt)}
+          </time>
+        </div>
       </div>
 
       <p className="mt-3 whitespace-pre-line leading-7 text-zinc-600">
@@ -55,6 +78,7 @@ export function ExperienceRow({ experience }: ExperienceRowProps) {
       <div className="mt-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-1.5 text-xs text-zinc-400">
           <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
+
           {authorName}
         </div>
 

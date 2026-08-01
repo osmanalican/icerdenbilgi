@@ -4,13 +4,43 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
+import { createExperience } from "@/app/paylas/_api";
+import { updateExperience } from "@/shared/api/client";
 import { CompanyAutocomplete, Spinner } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
-import { createExperience } from "@/app/paylas/_api";
+import type { ExperienceType } from "@/shared/types";
 
-type ExperienceFormProps = {
-  fixedCompanyName?: string;
+type ExperienceFormValues = {
+  companyName: string;
+  position: string;
+  type: ExperienceFormType;
+  title: string;
+  content: string;
+  isAnonymous: boolean;
 };
+
+type ExperienceInitialValues = {
+  companyName: string;
+  position: string;
+  type: ExperienceType;
+  title: string;
+  content: string;
+  isAnonymous: boolean;
+};
+
+type ExperienceFormProps =
+  | {
+      mode: "create";
+      fixedCompanyName?: string;
+      experienceId?: never;
+      initialValues?: never;
+    }
+  | {
+      mode: "edit";
+      fixedCompanyName?: never;
+      experienceId: string;
+      initialValues: ExperienceInitialValues;
+    };
 
 const experienceTypeMap = {
   interview: "INTERVIEW",
@@ -21,13 +51,11 @@ const experienceTypeMap = {
 
 type ExperienceFormType = keyof typeof experienceTypeMap;
 
-type ExperienceFormValues = {
-  companyName: string;
-  position: string;
-  type: ExperienceFormType;
-  title: string;
-  content: string;
-  isAnonymous: boolean;
+const formExperienceTypeMap: Record<ExperienceType, ExperienceFormType> = {
+  INTERVIEW: "interview",
+  WORK: "work",
+  INTERNSHIP: "internship",
+  OTHER: "other",
 };
 
 const inputClassName =
@@ -41,9 +69,29 @@ const disabledInputClassName =
 
 const errorClassName = "mt-2 text-sm text-red-600";
 
-export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
+export function ExperienceForm(props: ExperienceFormProps) {
   const { user } = useAuth();
   const router = useRouter();
+
+  const isEditMode = props.mode === "edit";
+
+  const defaultValues: ExperienceFormValues = isEditMode
+    ? {
+        companyName: props.initialValues.companyName,
+        position: props.initialValues.position,
+        type: formExperienceTypeMap[props.initialValues.type],
+        title: props.initialValues.title,
+        content: props.initialValues.content,
+        isAnonymous: props.initialValues.isAnonymous,
+      }
+    : {
+        companyName: props.fixedCompanyName ?? "",
+        position: "",
+        type: "other",
+        title: "",
+        content: "",
+        isAnonymous: true,
+      };
 
   const {
     control,
@@ -53,30 +101,33 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
     clearErrors,
     formState: { errors },
   } = useForm<ExperienceFormValues>({
-    defaultValues: {
-      companyName: fixedCompanyName ?? "",
-      position: "",
-      type: "other",
-      title: "",
-      content: "",
-      isAnonymous: true,
-    },
+    defaultValues,
   });
 
-  const createExperienceMutation = useMutation({
+  const experienceMutation = useMutation({
     mutationFn: async (values: ExperienceFormValues) => {
       if (!user) {
-        throw new Error("Deneyim paylaşmak için giriş yapmalısın.");
+        throw new Error(
+          isEditMode
+            ? "Deneyimi düzenlemek için giriş yapmalısın."
+            : "Deneyim paylaşmak için giriş yapmalısın.",
+        );
       }
 
-      return createExperience({
+      const payload = {
         companyName: values.companyName.trim(),
         position: values.position.trim(),
         type: experienceTypeMap[values.type],
         title: values.title.trim(),
         content: values.content.trim(),
         isAnonymous: values.isAnonymous,
-      });
+      };
+
+      if (isEditMode) {
+        return updateExperience(props.experienceId, payload);
+      }
+
+      return createExperience(payload);
     },
   });
 
@@ -84,7 +135,7 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
     clearErrors("root");
 
     try {
-      const result = await createExperienceMutation.mutateAsync(values);
+      const result = await experienceMutation.mutateAsync(values);
 
       router.push(`/${result.companySlug}`);
     } catch (error) {
@@ -93,10 +144,15 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
         message:
           error instanceof Error
             ? error.message
-            : "Deneyim paylaşılırken beklenmeyen bir hata oluştu.",
+            : isEditMode
+              ? "Deneyim güncellenirken beklenmeyen bir hata oluştu."
+              : "Deneyim paylaşılırken beklenmeyen bir hata oluştu.",
       });
     }
   }
+
+  const isCompanyFixed =
+    props.mode === "create" && Boolean(props.fixedCompanyName);
 
   return (
     <form
@@ -129,7 +185,7 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
               value.trim().length >= 2 || "Şirket adı en az 2 karakter olmalı.",
           }}
           render={({ field, fieldState }) =>
-            fixedCompanyName ? (
+            isCompanyFixed ? (
               <>
                 <input
                   id="companyName"
@@ -314,14 +370,20 @@ export function ExperienceForm({ fixedCompanyName }: ExperienceFormProps) {
       <div className="flex justify-end">
         <button
           type="submit"
-          disabled={createExperienceMutation.isPending}
+          disabled={experienceMutation.isPending}
           className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {createExperienceMutation.isPending && (
+          {experienceMutation.isPending && (
             <Spinner size="md" className="text-white" />
           )}
 
-          {createExperienceMutation.isPending ? "Paylaşılıyor..." : "Yayınla"}
+          {experienceMutation.isPending
+            ? isEditMode
+              ? "Kaydediliyor..."
+              : "Paylaşılıyor..."
+            : isEditMode
+              ? "Değişiklikleri kaydet"
+              : "Yayınla"}
         </button>
       </div>
     </form>

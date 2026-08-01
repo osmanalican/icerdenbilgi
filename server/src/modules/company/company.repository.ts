@@ -97,6 +97,7 @@ export function findCompanyBySlugWithExperiences(
         },
         select: {
           id: true,
+          userId: true,
           title: true,
           content: true,
           position: true,

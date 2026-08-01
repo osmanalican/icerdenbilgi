@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 
 import {
   createExperienceService,
+  getExperienceForEditService,
   getExperiencesService,
   toggleHelpfulVoteService,
   updateExperienceService,
@@ -167,6 +168,49 @@ export async function toggleHelpfulVoteController(
 
     return res.status(500).json({
       message: "Faydalı oyu güncellenirken bir hata oluştu.",
+    });
+  }
+}
+
+export async function getExperienceForEditController(
+  req: Request<ExperienceParams>,
+  res: Response,
+) {
+  if (!req.user) {
+    return res.status(401).json({
+      message: "Yetkisiz işlem.",
+    });
+  }
+
+  const { experienceId } = req.params;
+
+  if (!experienceId) {
+    return res.status(400).json({
+      message: "Geçersiz deneyim.",
+    });
+  }
+
+  try {
+    const result = await getExperienceForEditService(experienceId, req.user.id);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof Error && error.message === "EXPERIENCE_NOT_FOUND") {
+      return res.status(404).json({
+        message: "Deneyim bulunamadı.",
+      });
+    }
+
+    if (error instanceof Error && error.message === "FORBIDDEN") {
+      return res.status(403).json({
+        message: "Bu deneyimi görüntüleme yetkin bulunmuyor.",
+      });
+    }
+
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Deneyim bilgileri alınırken bir hata oluştu.",
     });
   }
 }

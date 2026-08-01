@@ -169,3 +169,25 @@ export function updateExperience(id: string, data: UpdateExperienceData) {
     },
   });
 }
+
+export function findExperienceForEdit(id: string) {
+  return prisma.experience.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      userId: true,
+      title: true,
+      content: true,
+      position: true,
+      type: true,
+      isAnonymous: true,
+      company: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+}

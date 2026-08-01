@@ -42,6 +42,7 @@ export async function getCompanyBySlugService(
       name: company.name,
       slug: company.slug,
       logoUrl: company.logoUrl,
+
       experiences: company.experiences.map((experience) => ({
         id: experience.id,
         title: experience.title,
@@ -51,13 +52,19 @@ export async function getCompanyBySlugService(
         createdAt: experience.createdAt,
         isAnonymous: experience.isAnonymous,
         user: experience.user,
+
         helpfulCount: experience._count.helpfulVotes,
+
         hasVoted: experience.helpfulVotes
           ? experience.helpfulVotes.length > 0
           : false,
+
+        canEdit: Boolean(currentUserId) && experience.userId === currentUserId,
       })),
+
       experienceCount: total,
     },
+
     pagination: {
       page,
       limit,

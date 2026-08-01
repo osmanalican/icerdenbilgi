@@ -31,7 +31,7 @@ export function SubmitExperiencePage({
       </p>
 
       <div className="mt-8">
-        <ExperienceForm fixedCompanyName={fixedCompanyName} />
+        <ExperienceForm mode="create" fixedCompanyName={fixedCompanyName} />
       </div>
     </section>
   );

@@ -2,8 +2,10 @@ import { Router } from "express";
 
 import { optionalSession } from "../../middlewares/optionalSession";
 import { requireSession } from "../../middlewares/requireSession";
+
 import {
   createExperienceController,
+  getExperienceForEditController,
   getExperiencesController,
   toggleHelpfulVoteController,
   updateExperienceController,
@@ -12,6 +14,12 @@ import {
 export const experienceRouter = Router();
 
 experienceRouter.get("/", optionalSession, getExperiencesController);
+
+experienceRouter.get(
+  "/:experienceId/edit",
+  requireSession,
+  getExperienceForEditController,
+);
 
 experienceRouter.post("/", requireSession, createExperienceController);
 
