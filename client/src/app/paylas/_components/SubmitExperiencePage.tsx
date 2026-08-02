@@ -1,27 +1,14 @@
-"use client";
-
-import { slugify } from "@/shared/utils/slugify";
-
 import { ExperienceForm } from "./ExperienceForm";
-import { mockExperiences } from "@/shared/data/mockExperiences";
 
 type SubmitExperiencePageProps = {
-  companySlug?: string;
+  fixedCompanyName?: string;
 };
 
 export function SubmitExperiencePage({
-  companySlug,
+  fixedCompanyName,
 }: SubmitExperiencePageProps) {
-  const company = companySlug
-    ? mockExperiences.find(
-        (experience) => slugify(experience.companyName) === companySlug,
-      )
-    : undefined;
-
-  const fixedCompanyName = company?.companyName;
-
   return (
-    <section className="mx-auto max-w-3xl px-6 py-16">
+    <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold tracking-tight text-zinc-950">
         Deneyimini paylaş
       </h1>

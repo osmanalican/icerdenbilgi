@@ -1,5 +1,7 @@
-import { SubmitExperiencePage } from "@/app/paylas/_components/SubmitExperiencePage";
 import type { Metadata } from "next";
+
+import { SubmitExperiencePage } from "@/app/paylas/_components/SubmitExperiencePage";
+import { getCompanyBySlug } from "@/shared/api/server";
 
 export const metadata: Metadata = {
   title: "Deneyimini Paylaş",
@@ -27,5 +29,11 @@ export default async function ShareRoute({ searchParams }: ShareRouteProps) {
     ? resolvedSearchParams.sirket[0]
     : resolvedSearchParams.sirket;
 
-  return <SubmitExperiencePage companySlug={companySlug} />;
+  const companyResult = companySlug
+    ? await getCompanyBySlug(companySlug)
+    : null;
+
+  return (
+    <SubmitExperiencePage fixedCompanyName={companyResult?.company.name} />
+  );
 }
