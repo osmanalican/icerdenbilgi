@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { ChevronDown, LogOut, Plus } from "lucide-react";
 
 import { deleteSession } from "@/shared/auth";
 import { logout } from "@/shared/firebase";
@@ -13,6 +13,7 @@ export function Header() {
   const router = useRouter();
 
   const { user, isAuthenticated, isLoading, refreshSession } = useAuth();
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const userInitial = user?.firstName?.[0] ?? user?.email?.[0] ?? "?";
@@ -33,13 +34,17 @@ export function Header() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-        <Link
-          href="/"
-          className="shrink-0 text-base font-semibold tracking-tight text-zinc-950 sm:text-lg"
-        >
-          İçerden
+        <Link href="/" className="group flex shrink-0 items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-sm shadow-indigo-200 transition group-hover:scale-105">
+            İ
+          </span>
+
+          <span className="text-base font-bold tracking-tight text-zinc-950 sm:text-lg">
+            İçerden
+            <span className="text-indigo-600">Bilgi</span>
+          </span>
         </Link>
 
         <nav
@@ -51,14 +56,15 @@ export function Header() {
               <>
                 <Link
                   href="/paylas"
-                  className="hidden h-9 items-center justify-center rounded-full bg-zinc-950 px-4 text-sm font-medium text-white transition hover:bg-zinc-800 sm:inline-flex"
+                  className="hidden h-9 items-center justify-center gap-1.5 rounded-full bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:inline-flex"
                 >
+                  <Plus className="h-4 w-4" aria-hidden="true" />
                   Deneyim ekle
                 </Link>
 
                 <Link
                   href="/paylas"
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-950 text-white transition hover:bg-zinc-800 sm:hidden"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white shadow-sm transition hover:bg-indigo-700 sm:hidden"
                   aria-label="Deneyim ekle"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
@@ -72,9 +78,9 @@ export function Header() {
                     onClick={() =>
                       setIsUserMenuOpen((previousValue) => !previousValue)
                     }
-                    className="flex h-9 cursor-pointer items-center gap-2 rounded-full border border-zinc-200 bg-white px-1 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50 sm:px-2"
+                    className="flex h-9 cursor-pointer items-center gap-2 rounded-full border border-zinc-200 bg-white px-1 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50/50 sm:px-2"
                   >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold uppercase text-zinc-700">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold uppercase text-indigo-700">
                       {userInitial}
                     </span>
 
@@ -86,21 +92,22 @@ export function Header() {
                         : user?.email}
                     </span>
 
-                    <span
+                    <ChevronDown
+                      className={[
+                        "hidden h-3.5 w-3.5 text-zinc-400 transition sm:block",
+                        isUserMenuOpen ? "rotate-180" : "",
+                      ].join(" ")}
                       aria-hidden="true"
-                      className="hidden text-zinc-400 sm:block"
-                    >
-                      ⌄
-                    </span>
+                    />
                   </button>
 
                   {isUserMenuOpen && (
                     <div
                       role="menu"
-                      className="absolute right-0 mt-3 w-[calc(100vw-2rem)] max-w-64 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl"
+                      className="absolute right-0 mt-3 w-[calc(100vw-2rem)] max-w-64 rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"
                     >
                       <div className="px-3 py-2">
-                        <p className="truncate text-sm font-medium text-zinc-900">
+                        <p className="truncate text-sm font-semibold text-zinc-900">
                           {user?.firstName
                             ? `${user.firstName}${
                                 user.lastName ? ` ${user.lastName}` : ""
@@ -119,8 +126,9 @@ export function Header() {
                         type="button"
                         role="menuitem"
                         onClick={handleLogout}
-                        className="w-full cursor-pointer rounded-xl px-3 py-2 text-left text-sm text-zinc-600 transition hover:bg-zinc-50 hover:text-zinc-950"
+                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-zinc-600 transition hover:bg-red-50 hover:text-red-600"
                       >
+                        <LogOut className="h-4 w-4" aria-hidden="true" />
                         Çıkış yap
                       </button>
                     </div>
@@ -131,14 +139,14 @@ export function Header() {
               <>
                 <Link
                   href="/giris"
-                  className="whitespace-nowrap text-sm text-zinc-600 transition hover:text-zinc-950"
+                  className="whitespace-nowrap text-sm font-medium text-zinc-600 transition hover:text-indigo-600"
                 >
                   Giriş yap
                 </Link>
 
                 <Link
                   href="/kayit"
-                  className="whitespace-nowrap rounded-full border border-zinc-300 px-3 py-2 text-sm text-zinc-900 transition hover:border-zinc-500 sm:px-4"
+                  className="whitespace-nowrap rounded-full bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:px-4"
                 >
                   Katıl
                 </Link>

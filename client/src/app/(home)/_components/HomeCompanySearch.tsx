@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { Search } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { useDebounce, useSearchCompanies } from "@/shared/hooks";
@@ -136,153 +136,157 @@ export function HomeCompanySearch() {
   const shouldShowDropdown = isOpen && canSearch;
 
   return (
-    <div ref={containerRef} className="relative mt-8 w-full max-w-2xl sm:mt-10">
-      <div className="flex w-full gap-2 sm:gap-3">
-        <div className="relative min-w-0 flex-1">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:hidden"
-            aria-hidden="true"
-          />
+    <div ref={containerRef} className="relative mt-8 w-full max-w-3xl sm:mt-10">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_40px_-12px_rgba(24,24,27,0.18)] ring-1 ring-black/[0.02]">
+        <div className="flex w-full gap-2">
+          <div className="relative min-w-0 flex-1">
+            <Search
+              className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-400"
+              aria-hidden="true"
+            />
 
-          <input
-            type="search"
-            role="combobox"
-            name="company"
-            value={query}
-            onChange={(event) => {
-              const value = event.target.value;
+            <input
+              type="search"
+              role="combobox"
+              name="company"
+              value={query}
+              onChange={(event) => {
+                const value = event.target.value;
 
-              setQuery(value);
-              setIsOpen(value.trim().length >= 2);
-              setActiveIndex(-1);
-            }}
-            onFocus={() => {
-              if (canSearch) {
-                setIsOpen(true);
+                setQuery(value);
+                setIsOpen(value.trim().length >= 2);
+                setActiveIndex(-1);
+              }}
+              onFocus={() => {
+                if (canSearch) {
+                  setIsOpen(true);
+                }
+              }}
+              onKeyDown={handleKeyDown}
+              aria-label="Şirket ara"
+              aria-expanded={shouldShowDropdown}
+              aria-autocomplete="list"
+              aria-controls={shouldShowDropdown ? listboxId : undefined}
+              aria-activedescendant={
+                safeActiveIndex >= 0
+                  ? `${listboxId}-option-${safeActiveIndex}`
+                  : undefined
               }
-            }}
-            onKeyDown={handleKeyDown}
-            aria-label="Şirket ara"
-            aria-expanded={shouldShowDropdown}
-            aria-autocomplete="list"
-            aria-controls={shouldShowDropdown ? listboxId : undefined}
-            aria-activedescendant={
-              safeActiveIndex >= 0
-                ? `${listboxId}-option-${safeActiveIndex}`
-                : undefined
-            }
-            autoComplete="off"
-            placeholder="Şirket ara..."
-            className="h-12 w-full rounded-xl border border-zinc-300 bg-white pr-4 pl-11 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-500 sm:pl-4 sm:text-base"
-          />
+              autoComplete="off"
+              placeholder="Şirket adı ara..."
+              className="h-12 w-full rounded-xl bg-transparent pr-3 pl-11 text-sm text-zinc-950 outline-none placeholder:text-zinc-400 sm:h-14 sm:text-base"
+            />
 
-          {shouldShowDropdown && (
-            <div
-              id={listboxId}
-              role="listbox"
-              className="absolute top-full left-0 z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-zinc-200 bg-white p-1 shadow-lg"
-            >
-              {isFetching && (
-                <p className="px-3 py-3 text-sm text-zinc-500">
-                  Şirketler aranıyor...
-                </p>
-              )}
+            {shouldShowDropdown && (
+              <div
+                id={listboxId}
+                role="listbox"
+                className="absolute top-full left-0 z-30 mt-3 max-h-80 w-full overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"
+              >
+                {isFetching && (
+                  <p className="px-3 py-3 text-sm text-zinc-500">
+                    Şirketler aranıyor...
+                  </p>
+                )}
 
-              {!isFetching && isError && (
-                <p className="px-3 py-3 text-sm text-red-600">
-                  Şirketler getirilemedi.
-                </p>
-              )}
+                {!isFetching && isError && (
+                  <p className="px-3 py-3 text-sm text-red-600">
+                    Şirketler getirilemedi.
+                  </p>
+                )}
 
-              {!isFetching &&
-                !isError &&
-                companies.map((company, index) => {
-                  const isActive = safeActiveIndex === index;
+                {!isFetching &&
+                  !isError &&
+                  companies.map((company, index) => {
+                    const isActive = safeActiveIndex === index;
 
-                  return (
-                    <button
-                      id={`${listboxId}-option-${index}`}
-                      key={company.id}
-                      type="button"
-                      role="option"
-                      aria-selected={isActive}
-                      onMouseEnter={() => setActiveIndex(index)}
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                        navigateToCompany(company.slug);
-                      }}
-                      className={[
-                        "flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left transition",
-                        isActive ? "bg-zinc-100" : "hover:bg-zinc-50",
-                      ].join(" ")}
-                    >
-                      <div className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-100 text-sm font-semibold text-zinc-600">
-                        {company.logoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={company.logoUrl}
-                            alt=""
-                            className="size-full object-cover"
-                          />
-                        ) : (
-                          company.name.charAt(0).toLocaleUpperCase("tr-TR")
-                        )}
-                      </div>
+                    return (
+                      <button
+                        id={`${listboxId}-option-${index}`}
+                        key={company.id}
+                        type="button"
+                        role="option"
+                        aria-selected={isActive}
+                        onMouseEnter={() => setActiveIndex(index)}
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          navigateToCompany(company.slug);
+                        }}
+                        className={[
+                          "group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left transition",
+                          isActive ? "bg-indigo-50" : "hover:bg-zinc-50",
+                        ].join(" ")}
+                      >
+                        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 text-sm font-bold text-zinc-600">
+                          {company.logoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={company.logoUrl}
+                              alt=""
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            company.name.charAt(0).toLocaleUpperCase("tr-TR")
+                          )}
+                        </div>
 
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-zinc-950">
-                          {company.name}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-zinc-900">
+                            {company.name}
+                          </p>
 
-                        <p className="truncate text-xs text-zinc-500">
-                          /{company.slug}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
+                          <p className="mt-0.5 truncate text-xs text-zinc-400">
+                            /{company.slug}
+                          </p>
+                        </div>
 
-              {!isFetching && !isError && companies.length === 0 && (
-                <p className="px-3 py-3 text-sm text-zinc-500">
-                  Eşleşen şirket bulunamadı.
-                </p>
-              )}
-            </div>
-          )}
+                        <ArrowRight
+                          className="h-4 w-4 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-500"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    );
+                  })}
+
+                {!isFetching && !isError && companies.length === 0 && (
+                  <p className="px-3 py-4 text-sm text-zinc-500">
+                    Eşleşen şirket bulunamadı.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSearch}
+            disabled={!canSearch}
+            className="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40 sm:h-14 sm:px-6"
+          >
+            <Search className="h-4 w-4 sm:hidden" aria-hidden="true" />
+
+            <span className="hidden sm:inline">Şirket ara</span>
+
+            <ArrowRight
+              className="hidden h-4 w-4 sm:block"
+              aria-hidden="true"
+            />
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleSearch}
-          disabled={!canSearch}
-          aria-label="Şirket ara"
-          className="flex h-12 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-zinc-950 px-4 font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
-        >
-          <Search className="h-4 w-4 sm:hidden" aria-hidden="true" />
-
-          <span className="hidden sm:inline">Ara</span>
-        </button>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-1.5 gap-y-2 text-xs text-zinc-500 sm:text-sm">
-        <span>Popüler:</span>
+      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-500 sm:text-sm">
+        <span className="mr-1 font-medium text-zinc-400">Popüler</span>
 
-        {popularCompanies.map((company, index) => (
-          <span key={company.slug} className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => navigateToCompany(company.slug)}
-              className="cursor-pointer text-zinc-700 transition hover:text-zinc-950 hover:underline"
-            >
-              {company.name}
-            </button>
-
-            {index < popularCompanies.length - 1 && (
-              <span className="text-zinc-300" aria-hidden="true">
-                ·
-              </span>
-            )}
-          </span>
+        {popularCompanies.map((company) => (
+          <button
+            key={company.slug}
+            type="button"
+            onClick={() => navigateToCompany(company.slug)}
+            className="cursor-pointer rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-zinc-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+          >
+            {company.name}
+          </button>
         ))}
       </div>
     </div>
