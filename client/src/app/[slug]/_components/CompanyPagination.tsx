@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type CompanyPaginationProps = {
   slug: string;
@@ -26,18 +27,22 @@ export function CompanyPagination({
   return (
     <nav
       aria-label="Deneyim sayfaları"
-      className="mt-10 flex flex-wrap items-center justify-center gap-2"
+      className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:mt-10"
     >
       {currentPage > 1 ? (
         <Link
           href={createPageHref(currentPage - 1)}
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 px-4 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50"
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 sm:px-4"
         >
-          Önceki
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+
+          <span className="hidden sm:inline">Önceki</span>
         </Link>
       ) : (
-        <span className="inline-flex h-10 cursor-not-allowed items-center justify-center rounded-lg border border-zinc-100 px-4 text-sm font-medium text-zinc-300">
-          Önceki
+        <span className="inline-flex h-10 cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-zinc-200/70 bg-white/60 px-3 text-sm font-medium text-zinc-300 sm:px-4">
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+
+          <span className="hidden sm:inline">Önceki</span>
         </span>
       )}
 
@@ -51,8 +56,8 @@ export function CompanyPagination({
             aria-current={isActive ? "page" : undefined}
             className={
               isActive
-                ? "inline-flex h-10 min-w-10 items-center justify-center rounded-lg bg-zinc-950 px-3 text-sm font-medium text-white"
-                : "inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50"
+                ? "inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-indigo-600 px-3 text-sm font-semibold text-white shadow-sm shadow-indigo-200"
+                : "inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
             }
           >
             {page}
@@ -63,13 +68,17 @@ export function CompanyPagination({
       {currentPage < totalPages ? (
         <Link
           href={createPageHref(currentPage + 1)}
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 px-4 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50"
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 sm:px-4"
         >
-          Sonraki
+          <span className="hidden sm:inline">Sonraki</span>
+
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       ) : (
-        <span className="inline-flex h-10 cursor-not-allowed items-center justify-center rounded-lg border border-zinc-100 px-4 text-sm font-medium text-zinc-300">
-          Sonraki
+        <span className="inline-flex h-10 cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-zinc-200/70 bg-white/60 px-3 text-sm font-medium text-zinc-300 sm:px-4">
+          <span className="hidden sm:inline">Sonraki</span>
+
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </span>
       )}
     </nav>

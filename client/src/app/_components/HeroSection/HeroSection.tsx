@@ -7,7 +7,7 @@ export function HeroSection() {
     <section className="relative overflow-hidden  bg-white">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-indigo-100/70 blur-3xl"
+        className="pointer-events-none absolute -top-40 left-1/2 h-130 w-180 -translate-x-1/2 rounded-full bg-indigo-100/70 blur-3xl"
       />
 
       <div
@@ -24,7 +24,7 @@ export function HeroSection() {
 
           <h1 className="mt-6 max-w-4xl text-4xl font-bold tracking-[-0.035em] text-zinc-950 sm:text-5xl md:text-6xl lg:text-7xl">
             Bir şirkete girmeden önce{" "}
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
               içeriden bak.
             </span>
           </h1>

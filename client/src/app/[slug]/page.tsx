@@ -4,8 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { EmptyState } from "@/shared/components";
 import { getCompanyBySlug } from "@/shared/api/server";
 import { CompanyHeader } from "@/app/[slug]/_components/CompanyHeader";
-import { ExperienceRow } from "@/app/[slug]/_components/ExperienceRow";
 import { CompanyPagination } from "@/app/[slug]/_components/CompanyPagination";
+import { ExperienceRow } from "@/app/[slug]/_components/ExperienceRow";
 
 type CompanyPageProps = {
   params: Promise<{
@@ -49,6 +49,7 @@ export async function generateMetadata({
   const { company } = result;
 
   const title = `${company.name} Çalışan Deneyimleri ve Mülakat Süreçleri`;
+
   const description =
     `${company.name} çalışanlarının paylaştığı mülakat süreçlerini, ` +
     `çalışma deneyimlerini ve pozisyon değerlendirmelerini keşfet.`;
@@ -97,31 +98,59 @@ export default async function CompanyPage({
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
-      <CompanyHeader
-        companyName={company.name}
-        companySlug={company.slug}
-        experienceCount={company.experienceCount}
-      />
+    <div className="min-h-full bg-linear-to-b from-indigo-50/35 via-zinc-50 to-zinc-50">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+        <CompanyHeader
+          companyName={company.name}
+          companySlug={company.slug}
+          experienceCount={company.experienceCount}
+        />
 
-      <div className="mt-8">
-        {company.experiences.length === 0 ? (
-          <EmptyState
-            title="Henüz deneyim paylaşılmamış"
-            description="Bu şirket hakkındaki ilk deneyimi sen paylaşabilirsin."
-          />
-        ) : (
-          company.experiences.map((experience) => (
-            <ExperienceRow key={experience.id} experience={experience} />
-          ))
-        )}
+        <section
+          aria-labelledby="company-experiences-title"
+          className="mt-8 sm:mt-10"
+        >
+          <div className="mb-5 flex items-end justify-between gap-4 sm:mb-6">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
+                Topluluktan
+              </p>
+
+              <h2
+                id="company-experiences-title"
+                className="mt-1.5 text-xl font-bold tracking-tight text-zinc-950 sm:text-2xl"
+              >
+                Paylaşılan deneyimler
+              </h2>
+
+              <p className="mt-1 text-sm leading-6 text-zinc-500">
+                Gerçek kullanıcıların bu şirket hakkındaki deneyimleri.
+              </p>
+            </div>
+          </div>
+
+          {company.experiences.length === 0 ? (
+            <div className="rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
+              <EmptyState
+                title="Henüz deneyim paylaşılmamış"
+                description="Bu şirket hakkındaki ilk deneyimi sen paylaşabilirsin."
+              />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {company.experiences.map((experience) => (
+                <ExperienceRow key={experience.id} experience={experience} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <CompanyPagination
+          slug={company.slug}
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+        />
       </div>
-
-      <CompanyPagination
-        slug={company.slug}
-        currentPage={pagination.page}
-        totalPages={pagination.totalPages}
-      />
     </div>
   );
 }
