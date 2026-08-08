@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, Plus } from "lucide-react";
+import { ChevronDown, LogOut, Plus, UserRound } from "lucide-react";
 
 import { deleteSession } from "@/shared/auth";
 import { logout } from "@/shared/firebase";
@@ -37,7 +37,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-sm shadow-indigo-200 transition group-hover:scale-105">
+          <span className="flex size-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white shadow-sm shadow-indigo-200 transition group-hover:scale-105">
             İ
           </span>
 
@@ -119,6 +119,19 @@ export function Header() {
                           {user?.email}
                         </p>
                       </div>
+
+                      <div className="my-1 h-px bg-zinc-100" />
+                      <div className="my-1 h-px bg-zinc-100" />
+
+                      <Link
+                        href="/profil"
+                        role="menuitem"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-zinc-600 transition hover:bg-indigo-50 hover:text-indigo-700"
+                      >
+                        <UserRound className="h-4 w-4" aria-hidden="true" />
+                        Profilim
+                      </Link>
 
                       <div className="my-1 h-px bg-zinc-100" />
 
