@@ -5,6 +5,7 @@ import type {
   UpdateExperienceInput,
 } from "./experience.schema";
 import {
+  countExperiencesByUserId,
   countHelpfulVotes,
   countPublishedExperiences,
   createExperience,
@@ -14,6 +15,7 @@ import {
   findExperienceById,
   findExperienceForEdit,
   findExperienceForUpdate,
+  findExperiencesByUserId,
   findHelpfulVote,
   findLatestExperiences,
   updateExperience,
@@ -31,6 +33,12 @@ type CreateExperienceServiceInput = CreateExperienceInput & {
 type UpdateExperienceServiceInput = UpdateExperienceInput & {
   experienceId: string;
   userId: string;
+};
+
+type GetMyExperiencesInput = {
+  userId: string;
+  page: number;
+  limit: number;
 };
 
 export async function createExperienceService(
@@ -210,5 +218,39 @@ export async function deleteExperienceService(
 
   return {
     success: true,
+  };
+}
+
+export async function getMyExperiencesService({
+  userId,
+  page,
+  limit,
+}: GetMyExperiencesInput) {
+  const [experiences, total] = await Promise.all([
+    findExperiencesByUserId(userId, page, limit),
+    countExperiencesByUserId(userId),
+  ]);
+
+  return {
+    experiences: experiences.map((experience) => ({
+      id: experience.id,
+      title: experience.title,
+      content: experience.content,
+      position: experience.position,
+      type: experience.type,
+      status: experience.status,
+      isAnonymous: experience.isAnonymous,
+      createdAt: experience.createdAt,
+      updatedAt: experience.updatedAt,
+      company: experience.company,
+      helpfulCount: experience._count.helpfulVotes,
+    })),
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
   };
 }

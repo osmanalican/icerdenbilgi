@@ -7,6 +7,7 @@ import {
   toggleHelpfulVoteService,
   deleteExperienceService,
   updateExperienceService,
+  getMyExperiencesService,
 } from "./experience.service";
 
 import {
@@ -255,6 +256,38 @@ export async function deleteExperienceController(
 
     return res.status(500).json({
       message: "Deneyim silinirken bir hata oluştu.",
+    });
+  }
+}
+
+export async function getMyExperiencesController(req: Request, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({
+      message: "Yetkisiz işlem.",
+    });
+  }
+
+  const rawPage = Number(req.query.page);
+  const rawLimit = Number(req.query.limit);
+
+  const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
+
+  const limit =
+    Number.isInteger(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, 20) : 6;
+
+  try {
+    const result = await getMyExperiencesService({
+      userId: req.user.id,
+      page,
+      limit,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Paylaşımların getirilirken bir hata oluştu.",
     });
   }
 }

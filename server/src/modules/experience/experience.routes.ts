@@ -8,6 +8,7 @@ import {
   deleteExperienceController,
   getExperienceForEditController,
   getExperiencesController,
+  getMyExperiencesController,
   toggleHelpfulVoteController,
   updateExperienceController,
 } from "./experience.controller";
@@ -15,6 +16,8 @@ import {
 export const experienceRouter = Router();
 
 experienceRouter.get("/", optionalSession, getExperiencesController);
+
+experienceRouter.get("/me", requireSession, getMyExperiencesController);
 
 experienceRouter.get(
   "/:experienceId/edit",

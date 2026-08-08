@@ -199,3 +199,56 @@ export function deleteExperience(id: string) {
     },
   });
 }
+
+export function findExperiencesByUserId(
+  userId: string,
+  page: number,
+  limit: number,
+) {
+  const skip = (page - 1) * limit;
+
+  return prisma.experience.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip,
+    take: limit,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      position: true,
+      type: true,
+      status: true,
+      isAnonymous: true,
+      createdAt: true,
+      updatedAt: true,
+
+      company: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logoUrl: true,
+        },
+      },
+
+      _count: {
+        select: {
+          helpfulVotes: true,
+        },
+      },
+    },
+  });
+}
+
+export function countExperiencesByUserId(userId: string) {
+  return prisma.experience.count({
+    where: {
+      userId,
+    },
+  });
+}
