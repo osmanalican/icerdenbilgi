@@ -130,7 +130,7 @@ export function Header() {
                         className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-zinc-600 transition hover:bg-indigo-50 hover:text-indigo-700"
                       >
                         <UserRound className="h-4 w-4" aria-hidden="true" />
-                        Profilim
+                        Paylaşımlarım
                       </Link>
 
                       <div className="my-1 h-px bg-zinc-100" />
