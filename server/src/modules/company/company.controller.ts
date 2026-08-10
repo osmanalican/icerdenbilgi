@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import {
+  getCompaniesForSitemapService,
   getCompanyBySlugService,
   searchCompaniesService,
 } from "./company.service";
@@ -62,6 +63,25 @@ export async function getCompanyBySlugController(
 
     return res.status(500).json({
       message: "Şirket getirilirken bir hata oluştu.",
+    });
+  }
+}
+
+export async function getCompaniesForSitemapController(
+  _req: Request,
+  res: Response,
+) {
+  try {
+    const companies = await getCompaniesForSitemapService();
+
+    return res.status(200).json({
+      companies,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Şirketler getirilirken bir hata oluştu.",
     });
   }
 }

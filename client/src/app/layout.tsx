@@ -15,12 +15,32 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://icerdenbilgi.vercel.app"),
+
   title: {
     default: "İçerdenBilgi",
     template: "%s | İçerdenBilgi",
   },
+
   description:
     "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    siteName: "İçerdenBilgi",
+    title: "İçerdenBilgi",
+    description:
+      "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+    url: "/",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "İçerdenBilgi",
+    description:
+      "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+  },
 };
 
 export default async function RootLayout({

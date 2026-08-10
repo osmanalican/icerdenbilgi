@@ -133,3 +133,15 @@ export function findCompanyBySlugWithExperiences(
     },
   });
 }
+
+export function findCompaniesForSitemap() {
+  return prisma.company.findMany({
+    select: {
+      slug: true,
+      updatedAt: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+}

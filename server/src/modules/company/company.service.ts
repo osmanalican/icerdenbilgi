@@ -1,4 +1,5 @@
 import {
+  findCompaniesForSitemap,
   findCompanyBySlugWithExperiences,
   searchCompanies,
 } from "./company.repository";
@@ -72,4 +73,8 @@ export async function getCompanyBySlugService(
       totalPages,
     },
   };
+}
+
+export async function getCompaniesForSitemapService() {
+  return findCompaniesForSitemap();
 }
