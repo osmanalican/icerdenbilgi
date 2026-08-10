@@ -14,10 +14,6 @@ export function Footer() {
             Gizlilik
           </Link>
 
-          <Link href="/iletisim" className="transition hover:text-zinc-900">
-            İletişim
-          </Link>
-
           <a
             href="https://github.com/osmanalican/icerdenbilgi"
             target="_blank"
