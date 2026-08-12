@@ -1,70 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { FileText, Plus, UserRound } from "lucide-react";
+import { FileText, Mail, ShieldCheck, UserRound } from "lucide-react";
 
-import { getMyExperiences } from "@/shared/api/server";
 import { getServerSession } from "@/shared/auth/getServerSession";
-import { MyExperienceCard } from "./_components/MyExperienceCard";
-import { ProfilePagination } from "./_components/ProfilePagination";
+import { DeleteAccountSection } from "@/app/profil/_components/DeleteAccountSection";
 
 export const metadata: Metadata = {
   title: "Profil",
-  description: "Paylaştığın deneyimleri görüntüle ve yönet.",
+  description: "Hesap bilgilerini ve hesap ayarlarını yönet.",
   robots: {
     index: false,
     follow: false,
   },
 };
 
-type ProfilePageProps = {
-  searchParams: Promise<{
-    page?: string;
-  }>;
-};
-
-function parsePositiveInteger(value: string | undefined, fallback: number) {
-  const parsedValue = Number(value);
-
-  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
-    return fallback;
-  }
-
-  return parsedValue;
-}
-
-export default async function ProfilePage({ searchParams }: ProfilePageProps) {
+export default async function ProfilePage() {
   const session = await getServerSession();
 
   if (!session?.user) {
     redirect("/giris?redirect=/profil");
-  }
-
-  const query = await searchParams;
-
-  const page = parsePositiveInteger(query.page, 1);
-
-  const result = await getMyExperiences({
-    page,
-  });
-
-  if (!result) {
-    redirect("/giris?redirect=/profil");
-  }
-
-  const { experiences, pagination } = result;
-
-  if (pagination.totalPages === 0 && page > 1) {
-    redirect("/profil");
-  }
-
-  if (pagination.totalPages > 0 && page > pagination.totalPages) {
-    const redirectUrl =
-      pagination.totalPages === 1
-        ? "/profil"
-        : `/profil?page=${pagination.totalPages}`;
-
-    redirect(redirectUrl);
   }
 
   const fullName = [session.user.firstName, session.user.lastName]
@@ -75,7 +30,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
   return (
     <div className="min-h-full bg-linear-to-b from-indigo-50/40 via-zinc-50 to-zinc-50">
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
         <section className="relative overflow-hidden rounded-3xl border border-indigo-100/80 bg-white p-5 shadow-[0_12px_45px_-20px_rgba(79,70,229,0.25)] sm:p-8">
           <div
             aria-hidden="true"
@@ -87,114 +42,108 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             className="pointer-events-none absolute -bottom-32 left-12 h-64 w-64 rounded-full bg-violet-100/50 blur-3xl"
           />
 
-          <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 items-center gap-4">
-              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-200/70 sm:size-16">
-                <UserRound
-                  className="h-6 w-6 sm:h-7 sm:w-7"
-                  aria-hidden="true"
-                />
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
-                  Profil
-                </p>
-
-                <h1 className="mt-1 wrap-break-word text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">
-                  {displayName}
-                </h1>
-
-                <p className="mt-1 truncate text-sm text-zinc-500">
-                  {session.user.email}
-                </p>
-              </div>
+          <div className="relative flex min-w-0 items-center gap-4">
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-200/70 sm:size-16">
+              <UserRound className="h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
             </div>
 
-            <div className="inline-flex w-fit items-center gap-2 rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm">
-              <FileText
-                className="h-4 w-4 text-indigo-600"
-                aria-hidden="true"
-              />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
+                Profil
+              </p>
 
-              <span className="text-zinc-600">
-                Toplam{" "}
-                <strong className="font-semibold text-indigo-700">
-                  {pagination.total}
-                </strong>{" "}
-                paylaşım
-              </span>
+              <h1 className="mt-1 wrap-break-word text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl">
+                {displayName}
+              </h1>
+
+              <p className="mt-1 text-sm text-zinc-500">
+                Hesap bilgilerini ve tercihlerini yönet.
+              </p>
             </div>
           </div>
         </section>
 
-        <section
-          aria-labelledby="my-experiences-title"
-          className="mt-8 sm:mt-10"
-        >
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
-                İçeriklerin
-              </p>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
+          <div className="space-y-6">
+            <section className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-7">
+              <div className="flex items-start gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <UserRound className="h-4 w-4" aria-hidden="true" />
+                </div>
 
-              <h2
-                id="my-experiences-title"
-                className="mt-1.5 text-xl font-bold tracking-tight text-zinc-950 sm:text-2xl"
-              >
-                Paylaşımlarım
-              </h2>
+                <div>
+                  <h2 className="font-semibold text-zinc-950">
+                    Hesap bilgileri
+                  </h2>
 
-              <p className="mt-1 text-sm leading-6 text-zinc-500">
-                Paylaştığın deneyimleri görüntüle, düzenle veya sil.
-              </p>
+                  <p className="mt-1 text-sm leading-6 text-zinc-500">
+                    İçerdenBilgi hesabına bağlı temel bilgiler.
+                  </p>
+                </div>
+              </div>
+
+              <dl className="mt-6 divide-y divide-zinc-100">
+                <div className="grid gap-1 py-4 sm:grid-cols-[160px_1fr] sm:items-center">
+                  <dt className="text-sm font-medium text-zinc-500">
+                    Ad soyad
+                  </dt>
+
+                  <dd className="wrap-break-word text-sm font-medium text-zinc-900">
+                    {fullName || "Belirtilmemiş"}
+                  </dd>
+                </div>
+
+                <div className="grid gap-1 py-4 sm:grid-cols-[160px_1fr] sm:items-center">
+                  <dt className="text-sm font-medium text-zinc-500">E-posta</dt>
+
+                  <dd className="flex min-w-0 items-center gap-2 text-sm font-medium text-zinc-900">
+                    <Mail
+                      className="h-4 w-4 shrink-0 text-zinc-400"
+                      aria-hidden="true"
+                    />
+
+                    <span className="truncate">{session.user.email}</span>
+                  </dd>
+                </div>
+
+                <div className="grid gap-1 py-4 sm:grid-cols-[160px_1fr] sm:items-center">
+                  <dt className="text-sm font-medium text-zinc-500">
+                    Hesap durumu
+                  </dt>
+
+                  <dd>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                      <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                      Aktif
+                    </span>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+
+            <DeleteAccountSection />
+          </div>
+
+          <aside className="h-fit rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <FileText className="h-4 w-4" aria-hidden="true" />
             </div>
+
+            <h2 className="mt-4 font-semibold text-zinc-950">Paylaşımların</h2>
+
+            <p className="mt-2 text-sm leading-6 text-zinc-500">
+              Paylaştığın mülakat, çalışma ve staj deneyimlerini ayrı sayfadan
+              görüntüleyebilir ve yönetebilirsin.
+            </p>
 
             <Link
-              href="/paylas"
-              className="inline-flex h-10 w-fit items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              href="/paylasimlarim"
+              className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-xl border border-indigo-200 bg-indigo-50 px-4 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
             >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              Yeni deneyim
+              Paylaşımlarıma git
             </Link>
-          </div>
-
-          {experiences.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-indigo-200 bg-white/70 px-5 py-14 text-center shadow-sm">
-              <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-                <FileText className="h-5 w-5" aria-hidden="true" />
-              </div>
-
-              <h3 className="mt-4 font-semibold text-zinc-950">
-                Henüz bir deneyim paylaşmadın
-              </h3>
-
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
-                Mülakat veya çalışma deneyimini paylaşarak diğer adaylara
-                içeriden bilgi verebilirsin.
-              </p>
-
-              <Link
-                href="/paylas"
-                className="mt-5 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700"
-              >
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                İlk deneyimini paylaş
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {experiences.map((experience) => (
-                <MyExperienceCard key={experience.id} experience={experience} />
-              ))}
-            </div>
-          )}
-
-          <ProfilePagination
-            currentPage={pagination.page}
-            totalPages={pagination.totalPages}
-          />
-        </section>
+          </aside>
+        </div>
       </div>
     </div>
   );

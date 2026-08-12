@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/giris", "/kayit", "/paylas", "/profil"],
+      disallow: ["/giris", "/kayit", "/paylas", "/profil", "/paylasimlarim"],
     },
 
     sitemap: "https://icerdenbilgi.vercel.app/sitemap.xml",

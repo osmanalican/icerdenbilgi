@@ -15,7 +15,7 @@ export function ProfilePagination({
   }
 
   const createPageHref = (page: number) =>
-    page === 1 ? "/profil" : `/profil?page=${page}`;
+    page === 1 ? "/paylasimlarim" : `/paylasimlarim?page=${page}`;
 
   const visiblePages = Array.from(
     { length: totalPages },

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, LogOut, Plus, UserRound } from "lucide-react";
+import { ChevronDown, FileText, LogOut, Plus, UserRound } from "lucide-react";
 
 import { deleteSession } from "@/shared/auth";
 import { logout } from "@/shared/firebase";
@@ -121,7 +121,6 @@ export function Header() {
                       </div>
 
                       <div className="my-1 h-px bg-zinc-100" />
-                      <div className="my-1 h-px bg-zinc-100" />
 
                       <Link
                         href="/profil"
@@ -130,6 +129,18 @@ export function Header() {
                         className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-zinc-600 transition hover:bg-indigo-50 hover:text-indigo-700"
                       >
                         <UserRound className="h-4 w-4" aria-hidden="true" />
+                        Profil
+                      </Link>
+
+                      <div className="my-1 h-px bg-zinc-100" />
+
+                      <Link
+                        href="/paylasimlarim"
+                        role="menuitem"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-zinc-600 transition hover:bg-indigo-50 hover:text-indigo-700"
+                      >
+                        <FileText className="h-4 w-4" aria-hidden="true" />
                         Paylaşımlarım
                       </Link>
 

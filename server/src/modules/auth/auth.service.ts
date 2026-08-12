@@ -1,6 +1,7 @@
 import { adminAuth } from "../../lib/firebase-admin";
 import {
   createUser,
+  deleteUserById,
   findUserByFireBaseUid,
   updateUserByFirebaseUid,
 } from "./auth.repository";
@@ -86,4 +87,34 @@ export async function verifySessionService(sessionCookie: string) {
 
 export async function getSessionUserService(firebaseUid: string) {
   return findUserByFireBaseUid(firebaseUid);
+}
+
+type DeleteAccountInput = {
+  userId: string;
+  firebaseUid: string;
+};
+
+export async function deleteAccountService({
+  userId,
+  firebaseUid,
+}: DeleteAccountInput) {
+  try {
+    await adminAuth.deleteUser(firebaseUid);
+  } catch (error) {
+    if (
+      !(
+        error instanceof Error &&
+        "code" in error &&
+        error.code === "auth/user-not-found"
+      )
+    ) {
+      throw error;
+    }
+  }
+
+  await deleteUserById(userId);
+
+  return {
+    success: true,
+  };
 }

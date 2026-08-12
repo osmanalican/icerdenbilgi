@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 
 import {
   createSessionService,
+  deleteAccountService,
   getSessionUserService,
   verifySessionService,
 } from "./auth.service";
@@ -117,4 +118,36 @@ export function logoutController(_req: Request, res: Response) {
   return res.status(200).json({
     success: true,
   });
+}
+
+export async function deleteAccountController(req: Request, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({
+      message: "Yetkisiz işlem.",
+    });
+  }
+
+  try {
+    await deleteAccountService({
+      userId: req.user.id,
+      firebaseUid: req.user.firebaseUid,
+    });
+
+    res.clearCookie(SESSION_COOKIE_NAME, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Account deletion failed:", error);
+
+    return res.status(500).json({
+      message: "Hesap silinirken bir hata oluştu.",
+    });
+  }
 }

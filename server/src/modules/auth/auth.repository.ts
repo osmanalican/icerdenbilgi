@@ -36,3 +36,11 @@ export function updateUserByFirebaseUid(
     data,
   });
 }
+
+export function deleteUserById(id: string) {
+  return prisma.user.delete({
+    where: {
+      id,
+    },
+  });
+}

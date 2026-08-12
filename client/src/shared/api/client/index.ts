@@ -5,3 +5,4 @@ export * from "./searchCompanies";
 export * from "./getExperienceForEdit";
 export * from "./updateExperience";
 export * from "./deleteExperience";
+export * from "./deleteAccount";
