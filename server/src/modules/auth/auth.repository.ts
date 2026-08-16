@@ -15,9 +15,19 @@ type UpdateUserData = {
   avatarUrl?: string | null;
 };
 
+type UpdateUserFirebaseUidData = UpdateUserData & {
+  firebaseUid: string;
+};
+
 export function findUserByFireBaseUid(firebaseUid: string) {
   return prisma.user.findUnique({
     where: { firebaseUid },
+  });
+}
+
+export function findUserByEmail(email: string) {
+  return prisma.user.findUnique({
+    where: { email },
   });
 }
 
@@ -33,6 +43,13 @@ export function updateUserByFirebaseUid(
 ) {
   return prisma.user.update({
     where: { firebaseUid },
+    data,
+  });
+}
+
+export function updateUserById(id: string, data: UpdateUserFirebaseUidData) {
+  return prisma.user.update({
+    where: { id },
     data,
   });
 }

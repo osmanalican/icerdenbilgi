@@ -10,6 +10,16 @@ import {
 const SESSION_COOKIE_NAME = "session";
 const SESSION_DURATION_MILLISECONDS = 1000 * 60 * 60 * 24 * 5;
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const sessionCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: "lax" as const,
+  path: "/",
+  domain: isProduction ? "icerdenbilgi.com" : undefined,
+};
+
 export async function createSessionController(req: Request, res: Response) {
   const idToken = req.body?.idToken;
 
@@ -23,10 +33,7 @@ export async function createSessionController(req: Request, res: Response) {
     const sessionCookie = await createSessionService(idToken);
 
     res.cookie(SESSION_COOKIE_NAME, sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
+      ...sessionCookieOptions,
       maxAge: SESSION_DURATION_MILLISECONDS,
     });
 
@@ -69,12 +76,7 @@ export async function verifySessionController(req: Request, res: Response) {
     const user = await getSessionUserService(decodedToken.uid);
 
     if (!user) {
-      res.clearCookie(SESSION_COOKIE_NAME, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
+      res.clearCookie(SESSION_COOKIE_NAME, sessionCookieOptions);
 
       return res.status(401).json({
         authenticated: false,
@@ -94,12 +96,7 @@ export async function verifySessionController(req: Request, res: Response) {
       },
     });
   } catch {
-    res.clearCookie(SESSION_COOKIE_NAME, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-    });
+    res.clearCookie(SESSION_COOKIE_NAME, sessionCookieOptions);
 
     return res.status(401).json({
       authenticated: false,
@@ -108,12 +105,7 @@ export async function verifySessionController(req: Request, res: Response) {
 }
 
 export function logoutController(_req: Request, res: Response) {
-  res.clearCookie(SESSION_COOKIE_NAME, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-  });
+  res.clearCookie(SESSION_COOKIE_NAME, sessionCookieOptions);
 
   return res.status(200).json({
     success: true,
@@ -132,13 +124,7 @@ export async function deleteAccountController(req: Request, res: Response) {
       userId: req.user.id,
       firebaseUid: req.user.firebaseUid,
     });
-
-    res.clearCookie(SESSION_COOKIE_NAME, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-    });
+    res.clearCookie(SESSION_COOKIE_NAME, sessionCookieOptions);
 
     return res.status(200).json({
       success: true,
