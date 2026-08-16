@@ -15,8 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://icerdenbilgi.vercel.app"),
-
+  metadataBase: new URL("https://icerdenbilgi.com"),
   title: {
     default: "İçerdenBilgi",
     template: "%s | İçerdenBilgi",

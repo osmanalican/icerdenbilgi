@@ -8,6 +8,7 @@ import { AuthCard } from "@/shared/components/AuthCard";
 import { createSession } from "@/shared/auth";
 import { signInWithGoogle } from "@/shared/firebase";
 import { getAuthErrorMessage } from "@/shared/utils";
+import Link from "next/link";
 
 type RegisterPageProps = {
   redirectTo?: string;
@@ -92,6 +93,18 @@ export function RegisterPage({ redirectTo }: RegisterPageProps) {
         </div>
 
         <RegisterForm redirectTo={safeRedirectPath} />
+        <p className="text-center text-xs leading-5 text-zinc-500">
+          Kayıt olarak{" "}
+          <Link
+            href="/kvkk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-indigo-600 hover:underline"
+          >
+            KVKK Aydınlatma Metni&apos;ni
+          </Link>{" "}
+          incelemiş olursunuz.
+        </p>
       </div>
     </AuthCard>
   );

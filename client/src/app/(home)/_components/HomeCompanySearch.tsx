@@ -6,13 +6,6 @@ import { useRouter } from "next/navigation";
 
 import { useDebounce, useSearchCompanies } from "@/shared/hooks";
 
-const popularCompanies = [
-  { name: "Trendyol", slug: "trendyol" },
-  { name: "Getir", slug: "getir" },
-  { name: "Hepsiburada", slug: "hepsiburada" },
-  { name: "Insider", slug: "insider" },
-];
-
 export function HomeCompanySearch() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,7 +130,7 @@ export function HomeCompanySearch() {
 
   return (
     <div ref={containerRef} className="relative mt-8 w-full max-w-3xl sm:mt-10">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_40px_-12px_rgba(24,24,27,0.18)] ring-1 ring-black/[0.02]">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_40px_-12px_rgba(24,24,27,0.18)] ring-1 ring-black/2">
         <div className="flex w-full gap-2">
           <div className="relative min-w-0 flex-1">
             <Search
@@ -217,7 +210,7 @@ export function HomeCompanySearch() {
                           isActive ? "bg-indigo-50" : "hover:bg-zinc-50",
                         ].join(" ")}
                       >
-                        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 text-sm font-bold text-zinc-600">
+                        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-linear-to-br from-zinc-50 to-zinc-100 text-sm font-bold text-zinc-600">
                           {company.logoUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -273,21 +266,6 @@ export function HomeCompanySearch() {
             />
           </button>
         </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-500 sm:text-sm">
-        <span className="mr-1 font-medium text-zinc-400">Popüler</span>
-
-        {popularCompanies.map((company) => (
-          <button
-            key={company.slug}
-            type="button"
-            onClick={() => navigateToCompany(company.slug)}
-            className="cursor-pointer rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-zinc-600 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
-          >
-            {company.name}
-          </button>
-        ))}
       </div>
     </div>
   );

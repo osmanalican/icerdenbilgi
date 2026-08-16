@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ["/giris", "/kayit", "/paylas", "/profil", "/paylasimlarim"],
     },
 
-    sitemap: "https://icerdenbilgi.vercel.app/sitemap.xml",
+    sitemap: "https://icerdenbilgi.com/sitemap.xml",
   };
 }

@@ -10,9 +10,18 @@ import { experienceRouter } from "./modules/experience";
 
 export const app = express();
 
+const allowedOrigins = ["http://localhost:3000", "https://icerdenbilgi.com"];
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("CORS origin not allowed"));
+    },
     credentials: true,
   }),
 );
