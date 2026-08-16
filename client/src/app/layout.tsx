@@ -16,6 +16,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://icerdenbilgi.com"),
+
   title: {
     default: "İçerdenBilgi",
     template: "%s | İçerdenBilgi",
@@ -32,6 +33,14 @@ export const metadata: Metadata = {
     description:
       "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
     url: "/",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "İçerdenBilgi - Bir şirkete girmeden önce içeriden bak",
+      },
+    ],
   },
 
   twitter: {
@@ -39,6 +48,7 @@ export const metadata: Metadata = {
     title: "İçerdenBilgi",
     description:
       "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+    images: ["/opengraph-image.png"],
   },
 };
 
