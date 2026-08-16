@@ -48,6 +48,11 @@ export function searchCompanies(query: string) {
         contains: query,
         mode: "insensitive",
       },
+      experiences: {
+        some: {
+          status: "PUBLISHED",
+        },
+      },
     },
     select: {
       id: true,

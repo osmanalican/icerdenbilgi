@@ -50,6 +50,7 @@ export function HomeCompanySearch() {
   function navigateToCompany(slug: string) {
     setIsOpen(false);
     setActiveIndex(-1);
+
     router.push(`/${slug}`);
   }
 
@@ -129,7 +130,10 @@ export function HomeCompanySearch() {
   const shouldShowDropdown = isOpen && canSearch;
 
   return (
-    <div ref={containerRef} className="relative mt-8 w-full max-w-3xl sm:mt-10">
+    <div
+      ref={containerRef}
+      className="relative z-40 mt-8 w-full max-w-3xl sm:mt-10"
+    >
       <div className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_12px_40px_-12px_rgba(24,24,27,0.18)] ring-1 ring-black/2">
         <div className="flex w-full gap-2">
           <div className="relative min-w-0 flex-1">
@@ -174,7 +178,7 @@ export function HomeCompanySearch() {
               <div
                 id={listboxId}
                 role="listbox"
-                className="absolute top-full left-0 z-30 mt-3 max-h-80 w-full overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"
+                className="absolute top-full left-0 z-50 mt-3 max-h-80 w-full overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-2 shadow-2xl"
               >
                 {isFetching && (
                   <p className="px-3 py-3 text-sm text-zinc-500">
@@ -203,6 +207,7 @@ export function HomeCompanySearch() {
                         onMouseEnter={() => setActiveIndex(index)}
                         onMouseDown={(event) => {
                           event.preventDefault();
+
                           navigateToCompany(company.slug);
                         }}
                         className={[
