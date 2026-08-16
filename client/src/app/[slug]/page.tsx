@@ -122,10 +122,6 @@ export default async function CompanyPage({
               >
                 Paylaşılan deneyimler
               </h2>
-
-              <p className="mt-1 text-sm leading-6 text-zinc-500">
-                Gerçek kullanıcıların bu şirket hakkındaki deneyimleri.
-              </p>
             </div>
           </div>
 
