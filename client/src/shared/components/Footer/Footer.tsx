@@ -18,10 +18,6 @@ export function Footer() {
             KVKK
           </Link>
 
-          <Link href="/iletisim" className="transition hover:text-zinc-900">
-            İletişim
-          </Link>
-
           <a
             href="mailto:iletisim@icerdenbilgi.com"
             className="transition hover:text-zinc-900"
