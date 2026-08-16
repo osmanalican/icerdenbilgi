@@ -4,16 +4,15 @@ import { HomeCompanySearch } from "@/app/(home)/_components";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden  bg-white">
+    <section className="relative z-20 bg-white">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 h-130 w-180 -translate-x-1/2 rounded-full bg-indigo-100/70 blur-3xl"
-      />
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      >
+        <div className="absolute -top-40 left-1/2 h-130 w-180 -translate-x-1/2 rounded-full bg-indigo-100/70 blur-3xl" />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-20 right-0 h-72 w-72 rounded-full bg-emerald-100/50 blur-3xl"
-      />
+        <div className="absolute top-20 right-0 h-72 w-72 rounded-full bg-emerald-100/50 blur-3xl" />
+      </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:py-24">
         <div className="max-w-4xl">
