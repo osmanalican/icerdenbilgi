@@ -100,7 +100,6 @@ export function CompanyHeader({
 
         <div className="mt-7 border-t border-zinc-100 pt-5">
           <p className="max-w-3xl text-sm leading-6 text-zinc-500">
-            Buradaki paylaşımlar gerçek kullanıcı deneyimlerinden oluşur.
             Mülakat süreci, pozisyon ve çalışma ortamı hakkında içeriden bilgi
             edin.
           </p>
