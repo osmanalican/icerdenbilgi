@@ -13,6 +13,21 @@ export function Footer() {
           <Link href="/gizlilik" className="transition hover:text-zinc-900">
             Gizlilik
           </Link>
+
+          <Link href="/kvkk" className="transition hover:text-zinc-900">
+            KVKK
+          </Link>
+
+          <Link href="/iletisim" className="transition hover:text-zinc-900">
+            İletişim
+          </Link>
+
+          <a
+            href="mailto:iletisim@icerdenbilgi.com"
+            className="transition hover:text-zinc-900"
+          >
+            iletisim@icerdenbilgi.com
+          </a>
         </nav>
       </div>
     </footer>
