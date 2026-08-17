@@ -4,16 +4,16 @@ import { getLatestExperiences } from "@/shared/api/server";
 import { HeroSection, RecentExperiences } from "@/app/_components";
 
 export const metadata: Metadata = {
-  title: "Şirket Mülakatları ve Çalışan Deneyimleri",
+  title: "Şirket Mülakatları ve İş Yeri Deneyimleri",
   description:
-    "Şirketlerin mülakat süreçlerini, çalışma ortamlarını ve gerçek çalışan deneyimlerini anonim paylaşımlarla keşfet.",
+    "Şirketlerin mülakat süreçleri, çalışma ortamları ve iş yeri deneyimleri hakkında anonim kullanıcı paylaşımlarını keşfet.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Şirket Mülakatları ve Çalışan Deneyimleri | İçerdenBilgi",
+    title: "Şirket Mülakatları ve İş Yeri Deneyimleri | İçerdenBilgi",
     description:
-      "Gerçek kullanıcıların paylaştığı mülakat ve çalışma deneyimlerini keşfet.",
+      "Şirketlerin mülakat süreçleri, çalışma ortamları ve iş yeri deneyimleri hakkında anonim paylaşımları keşfet.",
     type: "website",
     locale: "tr_TR",
     url: "/",

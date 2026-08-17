@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+    "Şirketlerin mülakat süreçleri, çalışma ortamları ve iş yeri deneyimleri hakkında anonim kullanıcı paylaşımlarını keşfet.",
 
   openGraph: {
     type: "website",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "İçerdenBilgi",
     title: "İçerdenBilgi",
     description:
-      "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+      "Şirketlerin mülakat süreçleri, çalışma ortamları ve iş yeri deneyimleri hakkında anonim kullanıcı paylaşımlarını keşfet.",
     url: "/",
     images: [
       {
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "İçerdenBilgi",
     description:
-      "Şirketlerin mülakat süreçlerini ve çalışma deneyimlerini gerçek kullanıcı paylaşımlarıyla keşfet.",
+      "Şirketlerin mülakat süreçleri, çalışma ortamları ve iş yeri deneyimleri hakkında anonim kullanıcı paylaşımlarını keşfet.",
     images: ["/opengraph-image.png"],
   },
 };
