@@ -28,11 +28,14 @@ function parsePositiveInteger(value: string | undefined, fallback: number) {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: CompanyPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+
+  const page = parsePositiveInteger(query.page, 1);
 
   const result = await getCompanyBySlug(slug, {
-    page: 1,
+    page,
   });
 
   if (!result) {
@@ -51,21 +54,24 @@ export async function generateMetadata({
   const title = `${company.name} Çalışan Deneyimleri ve Mülakat Süreçleri`;
 
   const description =
-    `${company.name} çalışanlarının paylaştığı mülakat süreçlerini, ` +
-    `çalışma deneyimlerini ve pozisyon değerlendirmelerini keşfet.`;
+    `${company.name} hakkında paylaşılan mülakat süreçlerini, ` +
+    `çalışma ortamı ve iş yeri deneyimlerini keşfet.`;
+
+  const canonical =
+    page === 1 ? `/${company.slug}` : `/${company.slug}?page=${page}`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `/${company.slug}`,
+      canonical,
     },
     openGraph: {
       title: `${title} | İçerdenBilgi`,
       description,
       type: "website",
       locale: "tr_TR",
-      url: `/${company.slug}`,
+      url: canonical,
     },
   };
 }
