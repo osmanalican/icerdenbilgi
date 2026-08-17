@@ -17,6 +17,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "tr_TR",
     url: "/",
+    images: [
+      {
+        url: "https://icerdenbilgi.com/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "İçerdenBilgi - Bir şirkete girmeden önce içeriden bak",
+      },
+    ],
   },
 };
 
