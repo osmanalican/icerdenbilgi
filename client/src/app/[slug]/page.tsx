@@ -72,6 +72,14 @@ export async function generateMetadata({
       type: "website",
       locale: "tr_TR",
       url: canonical,
+      images: [
+        {
+          url: "/opengraph-image.png",
+          width: 1200,
+          height: 630,
+          alt: "İçerdenBilgi - Bir şirkete girmeden önce içeriden bak",
+        },
+      ],
     },
   };
 }
